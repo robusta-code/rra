@@ -19,11 +19,7 @@ public interface Resource<IdType> {
      */
     public IdType getId();
 
-    /**
-     * @todo2 : change to Long object
-     */
-    public void setId(IdType id);
-
+   
 
 
 
