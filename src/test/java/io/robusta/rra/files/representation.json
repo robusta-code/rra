@@ -1,0 +1,47 @@
+{
+    "school":{
+        "name":"Boston school",
+        "size":4,
+        "price":12300.5,
+        "prices":[12300.5,10300.52,18100.55236],
+        "students":[
+            {
+                "id":1,
+                "firstname":"John",
+                "lastname":"Doe",
+                "age":12
+            },
+            {
+                "id":2,
+                "firstname":"Jim",
+                "lastname":"Bo",
+                "age":12
+            },
+            {
+                "id":3,
+                "firstname":"Jane",
+                "lastname":"Doe",
+                "age":13
+            },
+            {
+                "id":4,
+                "firstname":"Jack",
+                "lastname":"Rapper",
+                "age":13
+            }
+        ],
+        "classes":[
+            {
+                "name":"5th grade",
+                "students":[1, 2]
+            },
+            {
+                "name":"4th grade",
+                "students":[3, 4]
+            }
+        ],
+        "teachers":["Bill", "Brian", "Bob"],
+        "trustees":[1,2,3],
+        "years":[1992,1993,1994,1995,1996,1997,1998,1999]
+    }
+}
