@@ -39,7 +39,7 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class ResourceList<IdType, T extends Resource<IdType>> extends ArrayList<T> {
+public class ResourceList<IdType, T extends Resource<IdType>> extends ArrayList<T> implements ResourceCollection<IdType, T> {
 
 
 
@@ -116,7 +116,7 @@ public class ResourceList<IdType, T extends Resource<IdType>> extends ArrayList<
      * @return true if a Resource is found
      * @throws IllegalArgumentException if id == null
      */
-    public boolean containsId(IdType id) {
+    public boolean containsById(IdType id) {
         if (id == null) {
             throw new IllegalArgumentException("Null id entered");
         } else {
