@@ -34,7 +34,7 @@ public interface Resource<IdType> {
 
     /**
      * Name of the prefix used to represent a resource.
-     * For exemple, if the getPrefix() returns "house" and getListPrefix() returns "houses" for a resource House, a ResourceList<House>.getRepresentation() will return :
+     * For exemple, if the getPrefix() returns "house" and getCollectionPrefix() returns "houses" for a resource House, a ResourceList<House>.getRepresentation() will return :
      * <houses>
      *  <house><id>1</id><name>House 1</name></house>
      *  <house><id>2</id><name>Small House</name></house>
@@ -56,7 +56,7 @@ public interface Resource<IdType> {
      * Or : {houses:[{id:"1", name:"House 1"}, {id:"2", name:"Small House"}, {id:"3", name:"Big House"}]}
      * @return resource list prefix
      */
-    public String getListPrefix();
+    public String getCollectionPrefix();
 
 
     /**
