@@ -457,4 +457,9 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return null;
     }
 
+
+    @Override
+    public String toString() {
+        return this.document.toString();
+    }
 }
