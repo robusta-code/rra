@@ -2,11 +2,54 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.robusta</groupId>
     <artifactId>rra</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Robusta code Rest Adapter</name>
+    <description>Robusta code Rest Adapter (Rra) allows simple Rest enhancement for new or legacy Java projects </description>
+    <url>http://www.rra.io</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Robusta Code</name>
+        <url>http://www.robusta.io</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>nicorama</id>
+            <name>Nicolas Zozol</name>
+            <email>nz@robusta.io</email>
+            <url>http://www.robusta.io</url>
+            <organization>Robusta Code</organization>
+            <organizationUrl>http://www.robusta.io</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+            <properties>
+                <picUrl>http://www.toulousejug.org/images/nicolas.jpg</picUrl>
+            </properties>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
