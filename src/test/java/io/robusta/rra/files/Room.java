@@ -23,69 +23,35 @@
 
 package io.robusta.rra.files;
 
-
-import io.robusta.rra.Resource;
-import io.robusta.rra.resource.ResourceSerializer;
-
-import java.util.List;
-import java.util.Map;
-
 /**
- * Created by  Nicolas Zozol for Robusta Code
- * @author  Nicolas Zozol
+ * Created by dev on 02/09/14.
  */
-public class House {
+public class Room {
     String name;
-    float price;
-    List<Room> rooms;
-    Garden garden;
+    float surface;
 
-
-    public House(String name, float price) {
+    public Room(String name, float surface) {
         this.name = name;
-        this.price = price;
+        this.surface = surface;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof House){
-            return ((House)obj).name.equals(this.name);
-        }else {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Room room = (Room) o;
+
+        if (Float.compare(room.surface, surface) != 0) return false;
+        if (name != null ? !name.equals(room.name) : room.name != null) return false;
+
+        return true;
     }
 
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
-
-    public String getName() {
-
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Garden getGarden() {
-        return garden;
-    }
-
-    public void setGarden(Garden garden) {
-        this.garden = garden;
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (surface != +0.0f ? Float.floatToIntBits(surface) : 0);
+        return result;
     }
 }

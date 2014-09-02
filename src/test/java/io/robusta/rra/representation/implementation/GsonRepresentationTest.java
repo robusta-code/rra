@@ -24,11 +24,11 @@
 package io.robusta.rra.representation.implementation;
 
 import com.google.gson.Gson;
-import io.robusta.rra.RepresentationTest;
 import io.robusta.rra.files.House;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -45,9 +45,6 @@ public class GsonRepresentationTest extends JsonRepresentationTest {
 
     @Test
     public void testGetAs(){
-
-
-
 
         GsonRepresentation representation = new GsonRepresentation("12");
         assertTrue(representation.get(Long.class).equals(12L));

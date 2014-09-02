@@ -23,6 +23,11 @@
 
 package io.robusta.rra;
 
+import com.google.gson.Gson;
+import io.robusta.rra.files.Garden;
+import io.robusta.rra.files.House;
+import io.robusta.rra.files.Room;
+import io.robusta.rra.representation.implementation.GsonRepresentation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,6 +36,11 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -43,6 +53,7 @@ public class RepresentationTest {
     protected static String xml;
     protected boolean isJson;
     protected Representation representation;
+    protected static House whiteHouse;
 
     @BeforeClass
     public static void setUpClassToto() throws Exception {
@@ -54,6 +65,15 @@ public class RepresentationTest {
 
         jsonContent = readFile(filePlace + "representation.json");
         xml = readFile(filePlace + "representation.xml");
+
+        whiteHouse = new House("White House", 12.25f);
+        Room cuisine=new Room("cuisine",12.3f);
+        Room salon=new Room("salon",45f);
+        List<Room> rooms=new ArrayList<Room>();
+        rooms.add(cuisine);
+        rooms.add(salon);
+        whiteHouse.setRooms(rooms);
+        whiteHouse.setGarden(new Garden("jardin",300,true));
 
     }
     @Before
@@ -99,6 +119,15 @@ public class RepresentationTest {
     @Test
     public void testSet() throws Exception {
 
+        String json = "{name:'White House', price:12.25}";
+        GsonRepresentation representation = new GsonRepresentation(json);
+        Representation representationNew=representation.set("newChamp", "champ");
+
+        String jsonNew = "{'name':'White House', 'price':12.25, 'newChamp':'champ'}";
+        GsonRepresentation representationNew1 = new GsonRepresentation(jsonNew);
+
+        assertTrue(representationNew.toString().equals(representationNew1.toString()));
+
     }
 
     @Test
@@ -134,10 +163,26 @@ public class RepresentationTest {
     @Test
     public void testMerge() throws Exception {
 
+        GsonRepresentation representation = new GsonRepresentation(whiteHouse);
+        Representation representationMerge=representation.merge("old","new",representation);
+
+        assertTrue(representationMerge.toString().contains("new"));
+
     }
 
     @Test
     public void testRemove() throws Exception {
+
+
+        GsonRepresentation representation = new GsonRepresentation(whiteHouse);
+        Representation representationNew=representation.remove("price");
+        assertTrue(!representationNew.toString().contains("price"));
+
+        assertTrue(representationNew.toString().contains("cuisine"));
+        assertTrue(representationNew.toString().contains("cloture"));
+
+        representationNew=representation.remove("garden.cloture");
+        assertTrue(!representationNew.toString().contains("cloture"));
 
     }
 

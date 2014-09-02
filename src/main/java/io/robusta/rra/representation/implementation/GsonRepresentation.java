@@ -277,7 +277,29 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
 
     @Override
     public Representation remove(String key) throws RepresentationException {
-        asObject().remove(key);
+        int i=0;
+        if (key.contains(".")){
+            String[] keys = key.split("\\.");
+            if (keys.length == 0){
+                throw new IllegalArgumentException("Malformed key "+keys+" ; use something like user.school.id");
+            }
+            JsonElement current = asObject();
+            for (i=0;i<keys.length-1;i++){
+                current = current.getAsJsonObject().get(keys[i]);
+                if (current == null){
+                    throw new IllegalArgumentException("There is no valid object for key "+keys[i]+ " in '"+key+"'");
+                }
+            }
+            if (current.getAsJsonObject().get(keys[keys.length-1]) == null){
+                throw new IllegalArgumentException("There is no valid object for key "+keys[keys.length-1]+ " in '"+key+"'");
+            }
+            current.getAsJsonObject().remove(keys[keys.length-1]);
+        }else{
+            if (asObject().get(key) == null){
+                throw new IllegalArgumentException("There is no valid object for key "+key);
+            }
+            asObject().remove(key);
+        }
         return this;
     }
 
