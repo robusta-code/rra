@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class GsonRepresentationTest extends JsonRepresentationTest {
+public class GsonRepresentationTest extends JsonRepresentationTest<GsonRepresentation> {
 
 
     public GsonRepresentationTest(){

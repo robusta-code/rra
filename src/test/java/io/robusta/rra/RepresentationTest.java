@@ -46,13 +46,13 @@ import static org.junit.Assert.*;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class RepresentationTest {
+public abstract class RepresentationTest<T extends Representation>  {
 
     protected static String jsonContent;
     protected static String xml;
     protected boolean isJson;
-    protected Representation schoolRepresentation;
-    protected Representation emptyRepresentation;
+    protected T schoolRepresentation;
+    protected T emptyRepresentation;
     protected static House whiteHouse;
 
     @BeforeClass
@@ -159,15 +159,8 @@ public class RepresentationTest {
     public void testMerge() throws Exception {
 
         Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        System.out.println(whiteHouseRepresentation);
-
-        schoolRepresentation.set("house", whiteHouseRepresentation);
-        System.out.println(schoolRepresentation);
-
         Representation representationMerge=schoolRepresentation.merge("school", "house", whiteHouseRepresentation);
 
-        System.out.println(representationMerge);
-        System.out.println(representationMerge.fetch("house"));
         assertTrue(representationMerge.fetch("house").toString().contains("White House"));
 
     }
