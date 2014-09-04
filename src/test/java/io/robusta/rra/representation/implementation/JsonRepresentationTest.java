@@ -23,7 +23,11 @@
 
 package io.robusta.rra.representation.implementation;
 
+import io.robusta.rra.Representation;
 import io.robusta.rra.RepresentationTest;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -33,5 +37,14 @@ import io.robusta.rra.RepresentationTest;
 public class JsonRepresentationTest extends RepresentationTest {
 
 
+    @Test
+    public void testSetJson() throws Exception {
+
+        String fieldValue = "some value";
+        String json = "{name:'White House', price:12.25}";
+        Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
+        assertTrue(representation.get("newField").equals(fieldValue));
+
+    }
 
 }
