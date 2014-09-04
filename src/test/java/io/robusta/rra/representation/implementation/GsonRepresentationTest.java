@@ -40,6 +40,8 @@ public class GsonRepresentationTest extends JsonRepresentationTest {
 
     public GsonRepresentationTest(){
         isJson = true;
+        this.emptyRepresentation = new GsonRepresentation();
+        this.schoolRepresentation = new GsonRepresentation(readJson());
     }
 
 

@@ -23,11 +23,10 @@
 
 package io.robusta.rra;
 
-import com.google.gson.Gson;
+
 import io.robusta.rra.files.Garden;
 import io.robusta.rra.files.House;
 import io.robusta.rra.files.Room;
-import io.robusta.rra.representation.implementation.GsonRepresentation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**
@@ -52,7 +51,8 @@ public class RepresentationTest {
     protected static String jsonContent;
     protected static String xml;
     protected boolean isJson;
-    protected Representation representation;
+    protected Representation schoolRepresentation;
+    protected Representation emptyRepresentation;
     protected static House whiteHouse;
 
     @BeforeClass
@@ -119,14 +119,9 @@ public class RepresentationTest {
     @Test
     public void testSet() throws Exception {
 
-        String json = "{name:'White House', price:12.25}";
-        GsonRepresentation representation = new GsonRepresentation(json);
-        Representation representationNew=representation.set("newChamp", "champ");
-
-        String jsonNew = "{'name':'White House', 'price':12.25, 'newChamp':'champ'}";
-        GsonRepresentation representationNew1 = new GsonRepresentation(jsonNew);
-
-        assertTrue(representationNew.toString().equals(representationNew1.toString()));
+        String fieldValue = "some Value";
+        Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
+        assertTrue(representation.get("newField").equals(fieldValue));
 
     }
 
@@ -163,10 +158,17 @@ public class RepresentationTest {
     @Test
     public void testMerge() throws Exception {
 
-        GsonRepresentation representation = new GsonRepresentation(whiteHouse);
-        Representation representationMerge=representation.merge("old","new",representation);
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        System.out.println(whiteHouseRepresentation);
 
-        assertTrue(representationMerge.toString().contains("new"));
+        schoolRepresentation.set("house", whiteHouseRepresentation);
+        System.out.println(schoolRepresentation);
+
+        Representation representationMerge=schoolRepresentation.merge("school", "house", whiteHouseRepresentation);
+
+        System.out.println(representationMerge);
+        System.out.println(representationMerge.fetch("house"));
+        assertTrue(representationMerge.fetch("house").toString().contains("White House"));
 
     }
 
@@ -174,9 +176,9 @@ public class RepresentationTest {
     public void testRemove() throws Exception {
 
 
-        GsonRepresentation representation = new GsonRepresentation(whiteHouse);
+        Representation representation = createNewRepresentation(whiteHouse);
         Representation representationNew=representation.remove("price");
-        assertTrue(!representationNew.toString().contains("price"));
+        assertFalse(representationNew.toString().contains("price"));
 
         assertTrue(representationNew.toString().contains("cuisine"));
         assertTrue(representationNew.toString().contains("cloture"));
@@ -229,5 +231,40 @@ public class RepresentationTest {
             buffReader.close();
         }
         return text.toString();
+    }
+
+    public  static String readTestFile(String file) throws IOException {
+        String userDir = System.getProperty("user.dir");
+        String mavenPath="/src/test/java";
+        String packagePath = RepresentationTest.class.getPackage().getName().replaceAll("\\.", "/");
+        String filePlace = userDir+mavenPath+"/"+packagePath+"/files/";
+
+
+        return readFile(filePlace + file);
+
+    }
+
+    public  static String readJson(){
+        try {
+            return readTestFile("representation.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fail("Can't read representation.json file");
+        return null;
+    }
+
+    public static  String readXml(){
+        try {
+            return readTestFile("representation.xml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fail("Can't read representation.xml file");
+        return null;
+    }
+
+    public  Representation createNewRepresentation(Object o){
+        return this.emptyRepresentation.createNewRepresentation(o);
     }
 }
