@@ -24,14 +24,27 @@
 package io.robusta.rra.representation.implementation;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.reflection.ReflectionConverter;
+import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
+import com.thoughtworks.xstream.converters.reflection.SerializableConverter;
+import com.thoughtworks.xstream.core.ClassLoaderReference;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.mapper.Mapper;
 import io.robusta.rra.Representation;
 import io.robusta.rra.Resource;
 import io.robusta.rra.representation.JsonRepresentation;
 import io.robusta.rra.representation.RepresentationException;
+import io.robusta.rra.resource.ResourceSerializer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by  Nicolas Zozol for Robusta Code
@@ -48,9 +61,15 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class XstreamRepresentation implements JsonRepresentation<String> {
+public class XstreamRepresentation  implements JsonRepresentation<String>{
 
     String document;
+    Object data;
+    XStream xStream;
+    RraSerializerConverter converter;
+
+
+
 
     /**
      * In that case, is serialization if not null, it's always a JsonObject
@@ -62,10 +81,14 @@ public class XstreamRepresentation implements JsonRepresentation<String> {
     }
 
     public XstreamRepresentation(Object object) {
-        XStream xstream = new XStream(new JettisonMappedXmlDriver());
-        xstream.setMode(XStream.NO_REFERENCES);
-        xstream.alias("object", Object.class);
-        this.document=xstream.toXML(object);
+
+        this.data = object;
+        xStream = new XStream(new JettisonMappedXmlDriver());
+        this.converter = new RraSerializerConverter((Resource)object, xStream.getMapper(), xStream.getReflectionProvider());
+        xStream.registerConverter(converter);
+        xStream.setMode(XStream.NO_REFERENCES);
+        xStream.alias("object", Object.class);
+
     }
 
     public XstreamRepresentation(String json) {
@@ -180,12 +203,16 @@ public class XstreamRepresentation implements JsonRepresentation<String> {
 
     @Override
     public Representation set(String key, String value) {
+        //this.converter.setters.put(key, value);
+        this.converter.serialization.put(key, value);
         return this;
     }
 
     @Override
     public Representation set(String key, Object value) {
-        return null;
+        //this.converter.setters.put(key, value);
+        this.converter.serialization.put(key, value);
+        return this;
     }
 
     @Override
@@ -246,6 +273,44 @@ public class XstreamRepresentation implements JsonRepresentation<String> {
 
     @Override
     public String toString() {
+        this.document=xStream.toXML(this.data);
         return this.document;
     }
+
+
+
+    class RraSerializerConverter extends ReflectionConverter{
+
+        HashMap<String, Object> setters = new HashMap<String, Object>();
+        HashMap<String, Object> serialization = new HashMap<String, Object>();
+
+        public RraSerializerConverter(Resource resource, Mapper mapper, ReflectionProvider reflectionProvider) {
+            super(mapper, reflectionProvider);
+            this.serialization = ResourceSerializer.serialize(resource);
+        }
+
+
+        @Override
+        public void marshal(Object original, HierarchicalStreamWriter writer, MarshallingContext context) {
+
+
+            for (Map.Entry<String, Object> entry : serialization.entrySet()){
+                writer.startNode(entry.getKey());
+                context.convertAnother(entry.getValue());
+                writer.endNode();
+            }
+
+
+        }
+
+        @Override
+        public boolean canConvert(Class type) {
+            boolean result = Resource.class.isAssignableFrom(type);
+            //System.out.println("trying convert "+type.getSimpleName() + " to Resouce : "+result);
+            return result;
+        }
+    }
+
 }
+
+

@@ -34,7 +34,9 @@ import java.util.Map;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class House {
+public class House implements Resource<Long>{
+
+    long id;
     String name;
     float price;
     List<Room> rooms;
@@ -87,5 +89,25 @@ public class House {
 
     public void setGarden(Garden garden) {
         this.garden = garden;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getPrefix() {
+        return "house";
+    }
+
+    @Override
+    public String getCollectionPrefix() {
+        return "houses";
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        return ResourceSerializer.serialize(this);
     }
 }
