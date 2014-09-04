@@ -6,8 +6,7 @@ import io.robusta.rra.Resource;
 import io.robusta.rra.representation.JsonRepresentation;
 import io.robusta.rra.representation.RepresentationException;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;

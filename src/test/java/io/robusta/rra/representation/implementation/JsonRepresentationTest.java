@@ -25,6 +25,7 @@ package io.robusta.rra.representation.implementation;
 
 import io.robusta.rra.Representation;
 import io.robusta.rra.RepresentationTest;
+import io.robusta.rra.representation.JsonRepresentation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertTrue;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class JsonRepresentationTest extends RepresentationTest {
+public abstract class JsonRepresentationTest<J extends JsonRepresentation> extends RepresentationTest<J> {
 
 
     @Test
