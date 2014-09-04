@@ -64,13 +64,14 @@ public class JacksonRepresentationTest extends JsonRepresentationTest {
     public void testGetAsObject(){
 
 
-     /* House whiteHouse = new House("White House", 12.25f);
+      House whiteHouse = new House("White House", 12.25f);
 
-        String json = "{name:'White House', price:12.25}";
-        assertTrue(new Gson().fromJson(json, House.class).equals(whiteHouse));
+        String json = "{\"name\":\"White House\", \"price\":\"12.25\"}";
+        //assertTrue(new Gson().fromJson(json, House.class).equals(whiteHouse));
 
-        JacksonRepresentation representation = new JacksonRepresentation(json);
-        assertTrue(representation.get(House.class).equals(whiteHouse));*/
+        JacksonRepresentation representation = new JacksonRepresentation(whiteHouse);
+        //System.out.println(representation.get(House.class).toString());
+        //assertTrue(representation.get(House.class).equals(whiteHouse));
 
 
 

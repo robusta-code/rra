@@ -40,6 +40,9 @@ public class House {
     List<Room> rooms;
     Garden garden;
 
+    //Introducing the dummy constructor
+    public House() {
+    }
 
     public House(String name, float price) {
         this.name = name;
@@ -87,5 +90,15 @@ public class House {
 
     public void setGarden(Garden garden) {
         this.garden = garden;
+    }
+
+    @Override
+    public String toString() {
+        return "House{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", rooms=" + rooms +
+                ", garden=" + garden +
+                '}';
     }
 }
