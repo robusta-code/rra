@@ -28,6 +28,7 @@ import io.robusta.rra.files.House;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
@@ -73,6 +74,24 @@ public class GsonRepresentationTest extends JsonRepresentationTest<GsonRepresent
 
         GsonRepresentation representation = new GsonRepresentation(json);
         assertTrue(representation.get(House.class).equals(whiteHouse));
+
+
+
+    }
+
+    @Test
+    public void testIsObject(){
+
+
+        House whiteHouse = new House("White House", 12.25f);
+
+        String json = "{name:'White House', price:12.25}";
+        //assertTrue(new Gson().fromJson(json, House.class).equals(whiteHouse));
+
+        int i = 3;
+
+        GsonRepresentation representation = new GsonRepresentation(i);
+        assertFalse(representation.isObject());
 
 
 
