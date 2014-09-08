@@ -41,11 +41,12 @@ public abstract class JsonRepresentationTest<J extends JsonRepresentation> exten
     @Test
     public void testSetJson() throws Exception {
 
-        String fieldValue = "some value";
-        String json = "{name:'White House', price:12.25}";
-        Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
-        assertTrue(representation.get("newField").equals(fieldValue));
+        String json = "{\"name\":\"White House\", \"price\":12.25}";
+        Representation representation = createNewRepresentation( json);
+        //System.out.println(representation.get(House.class).toString());
+        assertTrue(representation.get("name").equals("White House"));
 
     }
+
 
 }

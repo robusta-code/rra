@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class XstreamRepresentationTest extends RepresentationTest {
+public class XstreamRepresentationTest extends JsonRepresentationTest<XstreamRepresentation> {
 
     private String s = "I am here for the test";
 
@@ -64,6 +64,83 @@ public class XstreamRepresentationTest extends RepresentationTest {
 
         //TODO
 
+    }
+
+    @Test
+    public void testAdd() throws Exception {
+
+    }
+
+    @Override
+    @Test
+    public void testHas() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testCopy() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testGetValuesWithClass() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testGetMissingKeys() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testSetWithClass() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testFetch() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testToString() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testAddAll() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testGetValues() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testGetWithKey() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testGetWithClass() throws Exception {
+        //TODO
+    }
+
+    @Override
+    @Test
+    public void testSetJson() throws Exception {
+        //TODO
     }
 
     @Test

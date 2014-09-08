@@ -27,7 +27,6 @@ package io.robusta.rra.files;
 import io.robusta.rra.Resource;
 import io.robusta.rra.resource.ResourceSerializer;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -35,19 +34,19 @@ import java.util.Map;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class House implements Resource<Long>{
-
-    long id;
+public class House {
     String name;
     float price;
     List<Room> rooms;
     Garden garden;
 
+    //Introducing the dummy constructor
+    public House() {
+    }
 
     public House(String name, float price) {
         this.name = name;
         this.price = price;
-        assert 2==2;
     }
 
     @Override
@@ -94,22 +93,12 @@ public class House implements Resource<Long>{
     }
 
     @Override
-    public Long getId() {
-        return this.id;
-    }
-
-    @Override
-    public String getPrefix() {
-        return "house";
-    }
-
-    @Override
-    public String getCollectionPrefix() {
-        return "houses";
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        return ResourceSerializer.serialize(this);
+    public String toString() {
+        return "House{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", rooms=" + rooms +
+                ", garden=" + garden +
+                '}';
     }
 }
