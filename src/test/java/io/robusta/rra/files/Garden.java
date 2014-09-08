@@ -23,13 +23,21 @@
 
 package io.robusta.rra.files;
 
+import io.robusta.rra.Resource;
+import io.robusta.rra.resource.ResourceSerializer;
+
+import java.util.Map;
+
 /**
  * Created by dev on 02/09/14.
  */
-public class Garden {
+public class Garden implements Resource<Long>{
+
+    Long id;
     String name;
     float surface;
     boolean cloture;
+    Object someNullObject = null;
 
     public Garden(String name, float surface,boolean cloture) {
         this.name = name;
@@ -48,6 +56,58 @@ public class Garden {
         if (name != null ? !name.equals(garden.name) : garden.name != null) return false;
 
         return true;
+    }
+
+    public float getSurface() {
+        return surface;
+    }
+
+    public void setSurface(float surface) {
+        this.surface = surface;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isCloture() {
+        return cloture;
+    }
+
+    public void setCloture(boolean cloture) {
+        this.cloture = cloture;
+    }
+
+    public Object getSomeNullObject() {
+        return someNullObject;
+    }
+
+    public void setSomeNullObject(Object someNullObject) {
+        this.someNullObject = null;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getPrefix() {
+        return "garden";
+    }
+
+    @Override
+    public String getCollectionPrefix() {
+        return "gardens";
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        return ResourceSerializer.serialize(this);
     }
 
     @Override

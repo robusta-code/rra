@@ -27,6 +27,7 @@ package io.robusta.rra.files;
 import io.robusta.rra.Resource;
 import io.robusta.rra.resource.ResourceSerializer;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class House implements Resource<Long>{
     public House(String name, float price) {
         this.name = name;
         this.price = price;
+        assert 2==2;
     }
 
     @Override

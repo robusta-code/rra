@@ -23,6 +23,7 @@
 
 package io.robusta.rra.representation.implementation;
 
+import com.google.gson.JsonElement;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -42,9 +43,8 @@ import io.robusta.rra.representation.RepresentationException;
 import io.robusta.rra.resource.ResourceSerializer;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Created by  Nicolas Zozol for Robusta Code
@@ -68,46 +68,28 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
     XStream xStream;
     RraSerializerConverter converter;
 
+    public XstreamRepresentation(Object data) {
 
-
-
-    /**
-     * In that case, is serialization if not null, it's always a JsonObject
-     *
-     * @param serialization
-     */
-    public XstreamRepresentation(HashMap<String, Object> serialization) {
-        //this.document = gson.toJsonTree(serialization);
-    }
-
-    public XstreamRepresentation(Object object) {
-
-        this.data = object;
+        this.data = data;
         xStream = new XStream(new JettisonMappedXmlDriver());
-        this.converter = new RraSerializerConverter((Resource)object, xStream.getMapper(), xStream.getReflectionProvider());
-        xStream.registerConverter(converter);
-        xStream.setMode(XStream.NO_REFERENCES);
-        xStream.alias("object", Object.class);
-
-    }
-
-    public XstreamRepresentation(String json) {
-        //this.document = new JsonParser().parse(json);
-    }
-
-    public XstreamRepresentation() {
-        this.document = null;
+       if(data != null){
+            this.converter = new RraSerializerConverter(data, xStream.getMapper(), xStream.getReflectionProvider());
+            xStream.registerConverter(converter);
+            xStream.setMode(XStream.NO_REFERENCES);
+            xStream.alias("object", Object.class);
+        }
     }
 
     @Override
     public String getDocument() {
-        return this.document;
+        return this.converter.serialization.toString();
     }
 
     @Override
     public <T> T get(Class<T> type) throws RepresentationException {
         return null;
     }
+
 
 
 
@@ -126,39 +108,42 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
         return null;
     }
 
-    @Override
-    public boolean isPrimitive() {
-        return false;
-    }
 
     @Override
-    public boolean isObject() {
-        return false;
+    public boolean isNull() {
+        return this.data == null;
     }
+
 
     @Override
     public boolean isBoolean() {
-        return false;
+        return this.data instanceof Boolean;
     }
 
     @Override
     public boolean isString() {
-        return false;
+        return this.data instanceof String;
     }
 
     @Override
     public boolean isNumber() {
-        return false;
+        return this.data instanceof Number;
+    }
+
+
+    @Override
+    public boolean isPrimitive() {
+        return (this.data instanceof Character) || (this.data instanceof Boolean) || (this.data instanceof Number) || (this.data instanceof String);
     }
 
     @Override
     public boolean isArray() {
-        return false;
+        return this.data instanceof Collection || this.data instanceof Object[];
     }
 
     @Override
-    public boolean isNull() {
-        return false;
+    public boolean isObject() {
+        return this.data instanceof Object;
     }
 
     @Override
@@ -204,15 +189,17 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
     @Override
     public Representation set(String key, String value) {
         //this.converter.setters.put(key, value);
-        this.converter.serialization.put(key, value);
-        return this;
+       /* this.converter.serialization.put(key, value);
+        return this;*/
+        return null;
     }
 
     @Override
     public Representation set(String key, Object value) {
         //this.converter.setters.put(key, value);
-        this.converter.serialization.put(key, value);
-        return this;
+        /*this.converter.serialization.put(key, value);
+        return this;*/
+        return null;
     }
 
     @Override
@@ -247,12 +234,17 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
 
     @Override
     public Representation remove(String key) throws RepresentationException {
+       /* this.converter.setters.putAll(this.converter.serialization);
+        this.converter.serialization.remove(key); */
         return null;
     }
 
     @Override
     public Representation fetch(String key) {
-        return null;
+
+        Object obj= this.converter.serialization.get(key);
+        XstreamRepresentation newRepresentation = new XstreamRepresentation(obj);
+        return newRepresentation;
     }
 
     @Override
@@ -284,29 +276,35 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
         HashMap<String, Object> setters = new HashMap<String, Object>();
         HashMap<String, Object> serialization = new HashMap<String, Object>();
 
-        public RraSerializerConverter(Resource resource, Mapper mapper, ReflectionProvider reflectionProvider) {
+        public RraSerializerConverter(Object resource, Mapper mapper, ReflectionProvider reflectionProvider) {
             super(mapper, reflectionProvider);
-            this.serialization = ResourceSerializer.serialize(resource);
+
         }
 
 
         @Override
         public void marshal(Object original, HierarchicalStreamWriter writer, MarshallingContext context) {
 
+            serialization = ResourceSerializer.serialize(original);
+            System.out.println("Marshalling "+original +" - "+serialization.toString());
+
 
             for (Map.Entry<String, Object> entry : serialization.entrySet()){
                 writer.startNode(entry.getKey());
-                context.convertAnother(entry.getValue());
+                if(entry.getValue() == null){
+                    writer.setValue(null);
+                    context.put(entry.getKey(), null);
+                }else {
+                    context.convertAnother(entry.getValue());
+                }
                 writer.endNode();
             }
-
-
         }
 
         @Override
         public boolean canConvert(Class type) {
             boolean result = Resource.class.isAssignableFrom(type);
-            //System.out.println("trying convert "+type.getSimpleName() + " to Resouce : "+result);
+            System.out.println("trying convert "+type.getSimpleName() + " to Resource : "+result);
             return result;
         }
     }
