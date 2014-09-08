@@ -6,10 +6,11 @@ import io.robusta.rra.Resource;
 import io.robusta.rra.representation.JsonRepresentation;
 import io.robusta.rra.representation.RepresentationException;
 
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by  Nicolas Zozol for Robusta Code
@@ -87,7 +88,7 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         } else if (type == String.class) {
             return (T) element.getAsString();
         } else {
-            return (T) gson.fromJson(this.document, type);
+            return (T) gson.fromJson(element, type);
         }
     }
 
@@ -308,7 +309,7 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         JsonElement root;
 
         if (key.contains(".")){
-            String[] keys = key.split(".");
+            String[] keys = key.split("\\.");
             if (keys.length == 0){
                 throw new IllegalArgumentException("Malformed key "+keys+" ; use something like user.school.id");
             }
@@ -352,6 +353,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
     @Override
     public Representation createNewRepresentation(Object newObject) {
         return new GsonRepresentation(newObject);
+    }
+
+    @Override
+    public Representation createNewRepresentation(String json) {
+        return new GsonRepresentation(json);
     }
 
     @Override

@@ -88,31 +88,36 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     @Test
     public void testToString() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        assertTrue(whiteHouseRepresentation.toString().contains("White House"));
     }
 
     @Test
     public void testGetWithKey() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        assertTrue(whiteHouseRepresentation.get("name").contains("White"));
     }
 
     @Test
     public void testGetWithClass() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        assertTrue(whiteHouseRepresentation.get(House.class).equals(whiteHouse));
     }
 
     @Test
     public void testHas() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        assertTrue(whiteHouseRepresentation.has("garden","rooms") == true);
     }
 
-    @Test
-    public void testHasNotEmpty() throws Exception {
-
-    }
 
     @Test
     public void testGetMissingKeys() throws Exception {
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        whiteHouseRepresentation.set("test","");
+        whiteHouseRepresentation.has("garden","test");
+
+        assertTrue(whiteHouseRepresentation.getMissingKeys().contains("test"));
 
     }
 
@@ -127,22 +132,43 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     @Test
     public void testSetWithClass() throws Exception {
+        Room bedroom=new Room("bedroom",12.3f);
+        Room bathroom=new Room("bathroom",45f);
+        List<Room> rooms=new ArrayList<Room>();
+        rooms.add(bedroom);
+        rooms.add(bathroom);
+        Representation representation = createNewRepresentation(whiteHouse).set("rooms", rooms);
 
+        //System.out.println(representation.toString());
+        assertTrue(representation.fetch("rooms").toString().contains("bedroom"));
     }
 
     @Test
     public void testGetValues() throws Exception {
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+//        System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.getValues("rooms"));
+        assertTrue(whiteHouseRepresentation.getValues("rooms").toString().contains("cuisine"));
 
     }
 
     @Test
     public void testGetValuesWithClass() throws Exception {
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.getValues(Room.class,"rooms"));
+        assertTrue(whiteHouseRepresentation.getValues(Room.class,"rooms").toString().contains("cuisine"));
 
     }
 
     @Test
     public void testAdd() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        List<String> trees= new ArrayList<String>();
+        trees.add("tree1");
+        trees.add("tree2");
+        whiteHouseRepresentation.set("trees", trees);
+        whiteHouseRepresentation.add("trees","tree3");
+        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.toString());
+        assertTrue(whiteHouseRepresentation.toString().contains("tree3"));
     }
 
     @Test
@@ -152,7 +178,18 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     @Test
     public void testAddAll() throws Exception {
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        List<String> trees= new ArrayList<String>();
+        trees.add("tree1");
+        trees.add("tree2");
+        whiteHouseRepresentation.set("trees", trees);
 
+        List<String> newTrees= new ArrayList<String>();
+        newTrees.add("tree3");
+        newTrees.add("tree4");
+        whiteHouseRepresentation.addAll("trees",newTrees);
+        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.toString());
+        assertTrue(whiteHouseRepresentation.toString().contains("tree4"));
     }
 
     @Test
@@ -161,6 +198,7 @@ public abstract class RepresentationTest<T extends Representation>  {
         Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
         Representation representationMerge=schoolRepresentation.merge("school", "house", whiteHouseRepresentation);
 
+        assertTrue(representationMerge.fetch("school").toString().contains("students"));
         assertTrue(representationMerge.fetch("house").toString().contains("White House"));
 
     }
@@ -183,12 +221,16 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     @Test
     public void testFetch() throws Exception {
-
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+        assertTrue(whiteHouseRepresentation.fetch("rooms").toString().contains("cuisine"));
     }
 
     @Test
     public void testCopy() throws Exception {
+        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
 
+        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.copy().toString());
+        assertTrue(whiteHouseRepresentation.copy().toString().equals(whiteHouseRepresentation.toString()));
     }
 
     @Test
@@ -259,5 +301,9 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     public  Representation createNewRepresentation(Object o){
         return this.emptyRepresentation.createNewRepresentation(o);
+    }
+
+    public  Representation createNewRepresentation(String s){
+        return this.emptyRepresentation.createNewRepresentation(s);
     }
 }

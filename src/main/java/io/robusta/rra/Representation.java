@@ -203,12 +203,14 @@ public interface Representation<Document> {
      */
     public Representation copy();
 
+    public Representation createNewRepresentation(String json);
 
     /**
      * Returns a new Representation object of newObject. This current Representation object is NOT affected.
      * @return  a Representation of newObject
      */
     public Representation createNewRepresentation(Object newObject);
+
 
     public Representation createNewRepresentation();
 

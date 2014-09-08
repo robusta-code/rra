@@ -24,6 +24,7 @@
 package io.robusta.rra.representation.implementation;
 
 import com.google.gson.Gson;
+import io.robusta.rra.files.Garden;
 import io.robusta.rra.files.House;
 import org.junit.Test;
 
@@ -35,28 +36,30 @@ import static org.junit.Assert.assertTrue;
  * Created by  Nicolas Zozol for Robusta Code
  * @author  Nicolas Zozol
  */
-public class JacksonRepresentationTest extends JsonRepresentationTest {
+public class JacksonRepresentationTest extends JsonRepresentationTest<JacksonRepresentation> {
 
 
     public JacksonRepresentationTest(){
         isJson = true;
+        this.emptyRepresentation = new JacksonRepresentation();
+        this.schoolRepresentation = new JacksonRepresentation(readJson());
     }
 
 
     @Test
     public void testGetAs(){
 
-        /*GsonRepresentation representation = new GsonRepresentation("12");
+        JacksonRepresentation representation = new JacksonRepresentation("12");
         assertTrue(representation.get(Long.class).equals(12L));
 
-        representation = new GsonRepresentation("12");
+        representation = new JacksonRepresentation("12");
         assertTrue(representation.get(Integer.class).equals(12));
 
-        representation = new GsonRepresentation("12.345");
+        representation = new JacksonRepresentation("12.345");
         assertTrue(representation.get(Float.class).equals(12.345f));
 
-        representation = new GsonRepresentation("'12'");
-        assertEquals(representation.get(String.class), "12");*/
+        representation = new JacksonRepresentation("\"test String\"");
+        assertEquals(representation.get(String.class), "test String");
 
     }
 
@@ -66,12 +69,11 @@ public class JacksonRepresentationTest extends JsonRepresentationTest {
 
       House whiteHouse = new House("White House", 12.25f);
 
-        String json = "{\"name\":\"White House\", \"price\":\"12.25\"}";
-        //assertTrue(new Gson().fromJson(json, House.class).equals(whiteHouse));
+        String json = "{\"name\":\"White House\", \"price\":12.25}";
 
-        JacksonRepresentation representation = new JacksonRepresentation(whiteHouse);
+        JacksonRepresentation representation = new JacksonRepresentation(json);
         //System.out.println(representation.get(House.class).toString());
-        //assertTrue(representation.get(House.class).equals(whiteHouse));
+        assertTrue(representation.get(House.class).equals(whiteHouse));
 
 
 

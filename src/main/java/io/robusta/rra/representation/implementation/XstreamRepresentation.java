@@ -239,6 +239,11 @@ public class XstreamRepresentation implements JsonRepresentation<String> {
     }
 
     @Override
+    public Representation createNewRepresentation(String json) {
+        return null;
+    }
+
+    @Override
     public Representation createNewRepresentation() {
         return null;
     }

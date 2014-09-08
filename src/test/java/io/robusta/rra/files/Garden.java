@@ -31,10 +31,37 @@ public class Garden {
     float surface;
     boolean cloture;
 
+    public Garden() {
+    }
+
     public Garden(String name, float surface,boolean cloture) {
         this.name = name;
         this.surface = surface;
         this.cloture=cloture;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public float getSurface() {
+        return surface;
+    }
+
+    public void setSurface(float surface) {
+        this.surface = surface;
+    }
+
+    public boolean isCloture() {
+        return cloture;
+    }
+
+    public void setCloture(boolean cloture) {
+        this.cloture = cloture;
     }
 
     @Override

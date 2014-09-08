@@ -28,10 +28,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.robusta.rra.Representation;
 import io.robusta.rra.Resource;
 import io.robusta.rra.representation.JsonRepresentation;
@@ -320,7 +316,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     public List<String> getValues(String key) throws RepresentationException {
         List<String> list = new ArrayList<String>();
         for (JsonNode elt : asObject().get(key)) {
-            list.add(elt.textValue());
+            list.add(elt.toString());
         }
         return list;
     }
@@ -456,6 +452,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     @Override
     public Representation createNewRepresentation(Object newObject) {
         return new JacksonRepresentation(newObject);
+    }
+
+    @Override
+    public Representation createNewRepresentation(String json) {
+        return new JacksonRepresentation(json);
     }
 
     @Override

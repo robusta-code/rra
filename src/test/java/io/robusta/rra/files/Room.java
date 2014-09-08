@@ -30,6 +30,26 @@ public class Room {
     String name;
     float surface;
 
+
+    public Room() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public float getSurface() {
+        return surface;
+    }
+
+    public void setSurface(float surface) {
+        this.surface = surface;
+    }
+
     public Room(String name, float surface) {
         this.name = name;
         this.surface = surface;
@@ -53,5 +73,13 @@ public class Room {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (surface != +0.0f ? Float.floatToIntBits(surface) : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "name='" + name + '\'' +
+                ", surface=" + surface +
+                '}';
     }
 }
