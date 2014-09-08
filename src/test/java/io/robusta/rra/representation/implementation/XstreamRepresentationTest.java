@@ -2,8 +2,6 @@ package io.robusta.rra.representation.implementation;
 
 import io.robusta.rra.Representation;
 import io.robusta.rra.RepresentationTest;
-import io.robusta.rra.files.Garden;
-import io.robusta.rra.files.House;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -45,6 +43,30 @@ public class XstreamRepresentationTest extends RepresentationTest {
     }
 
     @Test
+    public void testSet() throws Exception {
+
+        String fieldValue = "some Value";
+        //Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
+        //TODO
+
+    }
+
+    @Test
+    public void testMerge() throws Exception {
+
+        //TODO
+
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+
+
+        //TODO
+
+    }
+
+    @Test
     public void testXstreamRemove() {
 
         XstreamRepresentation representation = new XstreamRepresentation(whiteHouse);
@@ -56,13 +78,13 @@ public class XstreamRepresentationTest extends RepresentationTest {
     }
 
     @Test
-    public void testIsNull(){
+    public void testIsNull() {
         XstreamRepresentation representation = new XstreamRepresentation(null);
         assertTrue(representation.isNull());
     }
 
     @Test
-    public void testIsBoolean(){
+    public void testIsBoolean() {
         Boolean b = false;
         //XstreamRepresentation representation = new XstreamRepresentation(whiteHouse);
         XstreamRepresentation representation = new XstreamRepresentation(b);
@@ -70,14 +92,14 @@ public class XstreamRepresentationTest extends RepresentationTest {
     }
 
     @Test
-    public void testIsString(){
+    public void testIsString() {
         //XstreamRepresentation representation = new XstreamRepresentation(whiteHouse);
         XstreamRepresentation representation = new XstreamRepresentation(s);
         assertTrue(representation.isString());
     }
 
     @Test
-    public void testIsNumber(){
+    public void testIsNumber() {
         Long l = 15L;
         int i = 12;
         XstreamRepresentation representation = new XstreamRepresentation(l);
@@ -87,14 +109,14 @@ public class XstreamRepresentationTest extends RepresentationTest {
     }
 
     @Test
-    public void testIsPrimitive(){
+    public void testIsPrimitive() {
         XstreamRepresentation representation = new XstreamRepresentation(s);
         assertTrue(representation.isPrimitive());
     }
 
     @Test
-    public void testIsArray(){
-        Integer[] myTab = {1,2};
+    public void testIsArray() {
+        Integer[] myTab = {1, 2};
         List<Integer> myList = new ArrayList<Integer>();
 
         myList.add(1);
@@ -110,14 +132,14 @@ public class XstreamRepresentationTest extends RepresentationTest {
     }
 
     @Test
-    public void testIsObject(){
+    public void testIsObject() {
 
         XstreamRepresentation representation = new XstreamRepresentation(whiteHouse);
         assertTrue(representation.isObject());
     }
 
     @Test
-    public void testGetDocument(){
+    public void testGetDocument() {
         XstreamRepresentation representation = new XstreamRepresentation(whiteHouse);
         System.out.println(representation.getDocument());
     }
