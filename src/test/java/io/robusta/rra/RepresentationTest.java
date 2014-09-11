@@ -306,4 +306,8 @@ public abstract class RepresentationTest<T extends Representation>  {
     public  Representation createNewRepresentation(String s){
         return this.emptyRepresentation.createNewRepresentation(s);
     }
+
+    public  Representation createNewRepresentation(){
+        return this.emptyRepresentation.createNewRepresentation();
+    }
 }

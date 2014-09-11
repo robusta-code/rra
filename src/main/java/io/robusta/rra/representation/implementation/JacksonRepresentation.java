@@ -57,6 +57,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     JsonNode document;
     ObjectMapper mapper = new ObjectMapper();
+    List<String> missingKeys = new ArrayList<String>(5);
 
     /**
      * In that case, is serialization if not null, it's always a JsonObject
@@ -68,7 +69,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     public JacksonRepresentation(Object object) {
- //this.document = mapper.convertValue(object, JsonNode.class);
+        //this.document = mapper.convertValue(object, JsonNode.class);
         this.document = mapper.valueToTree(object);
     }
 
@@ -122,14 +123,20 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return get(type, element);
     }
 
-    protected ObjectNode asObject(){
+    protected ObjectNode asObject() {
         throwIfNotObject();
         return (ObjectNode) this.document;
     }
 
-    protected ArrayNode asArray(){
+    protected ArrayNode asArray() {
         throwIfNotArray();
         return (ArrayNode) this.document;
+    }
+
+    protected void throwIfNull(JsonNode elt) throws RepresentationException {
+        if (elt == null) {
+            throw new RepresentationException("The current element is null");
+        }
     }
 
     protected void throwIfNotArray(JsonNode elt) throws RepresentationException {
@@ -139,6 +146,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     protected void throwIfNotArray() throws RepresentationException {
+        throwIfNull(this.document);
         throwIfNotArray(this.document);
     }
 
@@ -149,6 +157,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     protected void throwIfNotObject() throws RepresentationException {
+        throwIfNull(this.document);
         throwIfNotObject(this.document);
     }
 
@@ -169,7 +178,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     public <T> List<T> pluck(Class<T> type, String key) throws RepresentationException {
         throwIfNotArray();
         List<T> result = new ArrayList<T>();
-        for (JsonNode elt : asArray()){
+        for (JsonNode elt : asArray()) {
             result.add(get(type, elt));
         }
         return result;
@@ -212,39 +221,38 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     @Override
     public JsonType getTypeof() {
-        if (this.isString()){
+        if (this.isString()) {
             return JsonType.STRING;
-        }else if (this.isArray()){
+        } else if (this.isArray()) {
             return JsonType.ARRAY;
-        }else if (this.isBoolean()){
+        } else if (this.isBoolean()) {
             return JsonType.BOOLEAN;
-        }else if (this.isNumber()){
+        } else if (this.isNumber()) {
             return JsonType.NUMBER;
-        }else if (this.isNull()){
+        } else if (this.isNull()) {
             return JsonType.NULL;
-        }else if (this.isObject()){
+        } else if (this.isObject()) {
             return JsonType.OBJECT;
-        }else throw new IllegalStateException("Can't find the type of this document");
+        } else throw new IllegalStateException("Can't find the type of this document");
     }
 
     @Override
     public Representation<JsonNode> createObject() {
-        if (this.document != null){
+        if (this.document != null) {
             throw new IllegalStateException("This representation is not Empty. Use createNewRepresentation() to get a new empty representation");
         }
-        this.document= mapper.createObjectNode();
+        this.document = mapper.createObjectNode();
         return this;
     }
 
     @Override
     public Representation<JsonNode> createArray() {
-        if (this.document != null){
+        if (this.document != null) {
             throw new IllegalStateException("This representation is not Empty. Use createNewRepresentation() to get a new empty representation");
         }
-        this.document= mapper.createArrayNode();
+        this.document = mapper.createArrayNode();
         return this;
     }
-
 
     protected boolean has(String key) {
 
@@ -254,9 +262,9 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     protected boolean hasNotEmpty(String key) {
-        throwIfNotObject(this.document);
+        throwIfNotObject();
         JsonNode elt = asObject().get(key);
-        if (elt.isNull() || (elt.isTextual() && elt.textValue().isEmpty())) {
+        if (elt == null || elt.isNull() || (elt.isTextual() && elt.textValue().isEmpty())) {
             //elt is null or empty string
             return false;
         } else {
@@ -264,8 +272,6 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         }
 
     }
-
-    List<String> missingKeys = new ArrayList<String>(5);
 
     @Override
     public boolean hasPossiblyEmpty(String... keys) {
@@ -351,7 +357,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     public Representation addAll(String key, List values) {
         throwIfNotObject();
         throwIfNotArray(this.asObject().get(key));
-        for (Object value : values){
+        for (Object value : values) {
             asObject().withArray(key).add(mapper.valueToTree(value));
         }
         return this;
@@ -359,8 +365,8 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     @Override
     public Representation merge(String keyForCurrent, String keyForNew, Representation representation) {
-        if (! (representation instanceof JacksonRepresentation)){
-            throw new IllegalArgumentException("Can't merge a JacksonRepresentation with a "+representation.getClass().getSimpleName());
+        if (!(representation instanceof JacksonRepresentation)) {
+            throw new IllegalArgumentException("Can't merge a JacksonRepresentation with a " + representation.getClass().getSimpleName());
         }
         JacksonRepresentation mergedRepresentation = new JacksonRepresentation();
         mergedRepresentation.createObject();
@@ -404,30 +410,31 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         throwIfNotObject();
         JsonNode root;
 
-        if (key.contains(".")){
+        if (key.contains(".")) {
             String[] keys = key.split("\\.");
-            if (keys.length == 0){
-                throw new IllegalArgumentException("Malformed key "+keys+" ; use something like user.school.id");
+            if (keys.length == 0) {
+                throw new IllegalArgumentException("Malformed key " + keys + " ; use something like user.school.id");
             }
-            String lastKey=keys[0];
+            String lastKey = keys[0];
             JsonNode current = asObject();
-            for (String newKey : keys){
-                if (! current.isObject()){
-                    throw new IllegalArgumentException("The key "+lastKey+ " in '"+key+"' doesn't point to a Json Object");
-                };
+            for (String newKey : keys) {
+                if (!current.isObject()) {
+                    throw new IllegalArgumentException("The key " + lastKey + " in '" + key + "' doesn't point to a Json Object");
+                }
+                ;
                 current = current.get(newKey);
-                if (current == null){
-                    throw new IllegalArgumentException("There is no valid object for key "+newKey+ "in '"+key+"'");
+                if (current == null) {
+                    throw new IllegalArgumentException("There is no valid object for key " + newKey + "in '" + key + "'");
                 }
             }
             root = current;
-        }else{
+        } else {
             root = asObject().get(key);
         }
 
-        if (root == null){
-            throw new IllegalArgumentException("There is no valid object for key "+key);
-        }else{
+        if (root == null) {
+            throw new IllegalArgumentException("There is no valid object for key " + key);
+        } else {
             JacksonRepresentation fetchedRepresentation = new JacksonRepresentation();
             fetchedRepresentation.document = root;
             return fetchedRepresentation;
@@ -438,7 +445,7 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     @Override
     public Representation copy() {
         String serialization = this.document.toString();
-        JsonNode clone=null;
+        JsonNode clone = null;
         try {
             clone = mapper.readTree(serialization);
         } catch (IOException e) {

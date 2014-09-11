@@ -117,10 +117,10 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
     }
 
     protected boolean hasNotEmpty(String key) {
-        throwIfNotObject(this.document);
+        throwIfNotObject();
         JsonObject object = this.document.getAsJsonObject();
         JsonElement elt = object.get(key);
-        if (elt.isJsonNull() || (isString(elt) && elt.getAsString().isEmpty())) {
+        if (elt == null || elt.isJsonNull() || (isString(elt) && elt.getAsString().isEmpty())) {
             //elt is null or empty string
             return false;
         } else {
@@ -167,6 +167,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    protected void throwIfNull(JsonElement elt) throws RepresentationException {
+        if (elt == null) {
+            throw new RepresentationException("The current element is null");
+        }
+    }
+
     protected void throwIfNotObject(JsonElement elt) throws RepresentationException {
         if (!elt.isJsonObject()) {
             throw new RepresentationException("The current element is not a JSON object but a " + this.getTypeof() + " and thus has no key");
@@ -174,16 +180,18 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
     }
 
     protected void throwIfNotObject() throws RepresentationException {
+        throwIfNull(this.document);
         throwIfNotObject(this.document);
     }
 
     protected void throwIfNotArray(JsonElement elt) throws RepresentationException {
-        if (!elt.isJsonArray()) {
+        if ( !elt.isJsonArray()) {
             throw new RepresentationException("The current element is not a JSON array but a " + this.getTypeof() + " and it can't add an object the correct way");
         }
     }
 
     protected void throwIfNotArray() throws RepresentationException {
+        throwIfNull(this.document);
         throwIfNotArray(this.document);
     }
 
