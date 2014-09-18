@@ -23,52 +23,50 @@
 
 package io.robusta.rra.controller;
 
-
-import io.robusta.rra.Controller;
 import io.robusta.rra.Representation;
 import io.robusta.rra.Rra;
+import io.robusta.rra.representation.implementation.GsonRepresentation;
 import io.robusta.rra.security.implementation.CodecException;
 import io.robusta.rra.security.implementation.CodecImpl;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by dev on 08/09/14.
+ * Handles requests for the application home page.
  */
-public class ServletController extends HttpServlet implements Controller {
-
+@Controller
+public class SpringController implements io.robusta.rra.Controller {
 
     protected DefaultClientProperty clientProperty;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
+    @PostConstruct
+    public void init() {
         clientProperty = new DefaultClientProperty();
     }
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        String contentType = req.getContentType();
+    @ModelAttribute("representation")
+    String representation(HttpServletRequest request ) throws IOException {
+        String contentType = request.getContentType();
 
         if (contentType != null && contentType.equals("application/json")) {
-            InputStream in = req.getInputStream();
+            InputStream in = request.getInputStream();
             StringBuffer stringBuffer = new StringBuffer();
             int d;
             while ((d = in.read()) != -1) {
                 stringBuffer.append((char) d);
             }
-            req.setAttribute("representation", stringBuffer.toString());
+            System.out.println(stringBuffer.toString());
+            System.out.println( Rra.defaultRepresentation instanceof GsonRepresentation);
+            request.setAttribute("representation", stringBuffer.toString());
         }
-
-        super.service(req, resp);
+        return "representation";
     }
-
 
     public Representation getRepresentation(HttpServletRequest req) {
         return Rra.defaultRepresentation.createNewRepresentation(req.getAttribute("representation").toString());
