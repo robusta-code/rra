@@ -11,20 +11,16 @@ import javax.ws.rs.core.*;
 import java.util.List;
 
 /**
- * Created by dev on 12/09/14.
+ * Created by Stephanie Pitou on 12/09/14.
  */
 public class JaxRsController {
 
     public static Representation defaultRepresentation = Rra.defaultRepresentation;
 
-    @Context
-    HttpHeaders httpHeader;
-    @Context
-    UriInfo uriInfo;
-    @Context
-    Response response;
-    @Context
-    Request request;
+    @Context HttpHeaders httpHeader;
+    @Context UriInfo uriInfo;
+    @Context Response response;
+    @Context Request request;
 
     public HttpHeaders getHttpHeader() {
         return httpHeader;
@@ -40,7 +36,6 @@ public class JaxRsController {
 
     public boolean isJsonApplication() {
         List<String> type = getHeaders().get("content-type");
-
         return (type.get(0) != null && type.get(0).equals("application/json"));
     }
 
@@ -95,7 +90,6 @@ public class JaxRsController {
     }
 
     public String getRequestEntity(String requestEntity) {
-        //System.out.println(requestEntity);
         return requestEntity;
     }
 
