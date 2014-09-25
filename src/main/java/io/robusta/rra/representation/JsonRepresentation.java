@@ -23,8 +23,7 @@
 
 package io.robusta.rra.representation;
 
-import io.robusta.rra.Representation;
-import io.robusta.rra.Resource;
+import io.robusta.rra.resource.Resource;
 
 import java.util.List;
 

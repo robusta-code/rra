@@ -27,6 +27,9 @@ import com.google.gson.Gson;
 import io.robusta.rra.files.House;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -76,6 +79,22 @@ public class GsonRepresentationTest extends JsonRepresentationTest<GsonRepresent
         assertTrue(representation.get(House.class).equals(whiteHouse));
 
 
+
+    }
+
+    @Test
+    public void testGetAsInputStream(){
+
+        String user = "{\"email\":\"email\",\"name\":\"name\"}";
+
+        InputStream inputStream=new ByteArrayInputStream(user.getBytes());
+
+
+        GsonRepresentation representation = new GsonRepresentation(inputStream);
+        System.out.println(representation.getDocument().toString());
+        System.out.println(user);
+
+        assertTrue(representation.getDocument().toString().equals(user));
 
     }
 

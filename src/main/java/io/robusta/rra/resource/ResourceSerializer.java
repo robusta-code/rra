@@ -23,8 +23,6 @@
 
 package io.robusta.rra.resource;
 
-import io.robusta.rra.Resource;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;

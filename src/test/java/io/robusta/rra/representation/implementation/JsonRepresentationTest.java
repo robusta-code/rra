@@ -23,9 +23,10 @@
 
 package io.robusta.rra.representation.implementation;
 
-import io.robusta.rra.Representation;
 import io.robusta.rra.RepresentationTest;
 import io.robusta.rra.representation.JsonRepresentation;
+import io.robusta.rra.representation.Representation;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

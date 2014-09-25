@@ -24,8 +24,6 @@
 package io.robusta.rra.resource;
 
 
-import io.robusta.rra.Resource;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

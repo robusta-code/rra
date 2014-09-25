@@ -27,6 +27,8 @@ package io.robusta.rra;
 import io.robusta.rra.files.Garden;
 import io.robusta.rra.files.House;
 import io.robusta.rra.files.Room;
+import io.robusta.rra.representation.Representation;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,10 +37,10 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 
@@ -305,6 +307,10 @@ public abstract class RepresentationTest<T extends Representation>  {
 
     public  Representation createNewRepresentation(String s){
         return this.emptyRepresentation.createNewRepresentation(s);
+    }
+
+    public  Representation createNewRepresentation(InputStream inputStream){
+        return this.emptyRepresentation.createNewRepresentation(inputStream);
     }
 
     public  Representation createNewRepresentation(){

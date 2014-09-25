@@ -23,25 +23,27 @@
 
 package io.robusta.rra.controller;
 
-import io.robusta.rra.Representation;
-import io.robusta.rra.Rra;
+import io.robusta.rra.representation.Representation;
+import io.robusta.rra.representation.Rra;
 import io.robusta.rra.representation.implementation.GsonRepresentation;
 import io.robusta.rra.security.implementation.CodecException;
 import io.robusta.rra.security.implementation.CodecImpl;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
-public class SpringController implements io.robusta.rra.Controller {
+public class SpringController implements io.robusta.rra.controller.Controller {
 
     protected DefaultClientProperty clientProperty;
 
@@ -50,43 +52,43 @@ public class SpringController implements io.robusta.rra.Controller {
         clientProperty = new DefaultClientProperty();
     }
 
-    @ModelAttribute("representation")
-    String representation(HttpServletRequest request ) throws IOException {
+    @ModelAttribute( "representation" )
+    String representation( HttpServletRequest request ) throws IOException {
         String contentType = request.getContentType();
 
-        if (contentType != null && contentType.equals("application/json")) {
+        if ( contentType != null && contentType.contains( "application/json" ) ) {
             InputStream in = request.getInputStream();
             StringBuffer stringBuffer = new StringBuffer();
             int d;
-            while ((d = in.read()) != -1) {
-                stringBuffer.append((char) d);
+            while ( ( d = in.read() ) != -1 ) {
+                stringBuffer.append( (char) d );
             }
-            System.out.println(stringBuffer.toString());
-            System.out.println( Rra.defaultRepresentation instanceof GsonRepresentation);
-            request.setAttribute("representation", stringBuffer.toString());
+            System.out.println( stringBuffer.toString() );
+            System.out.println( Rra.defaultRepresentation instanceof GsonRepresentation );
+            request.setAttribute( "representation", stringBuffer.toString() );
         }
         return "representation";
     }
 
-    public Representation getRepresentation(HttpServletRequest req) {
-        return Rra.defaultRepresentation.createNewRepresentation(req.getAttribute("representation").toString());
+    public Representation getRepresentation( HttpServletRequest req ) {
+        return Rra.defaultRepresentation.createNewRepresentation( req.getAttribute( "representation" ).toString() );
     }
 
-    protected void throwIfNull(Representation representation) throws ControllerException {
-        if (representation == null) {
-            throw new ControllerException("Representation is null");
+    protected void throwIfNull( Representation representation ) throws ControllerException {
+        if ( representation == null ) {
+            throw new ControllerException( "Representation is null" );
         }
     }
 
     @Override
-    public boolean validate(HttpServletRequest request, HttpServletResponse response, String... keys) {
-        Representation representation = getRepresentation(request);
-        throwIfNull(representation);
-        boolean valid = representation.has(keys);
-        if (!valid) {
+    public boolean validate( HttpServletRequest request, HttpServletResponse response, String... keys ) {
+        Representation representation = getRepresentation( request );
+        throwIfNull( representation );
+        boolean valid = representation.has( keys );
+        if ( !valid ) {
             try {
-                response.sendError(406, "Json not valid !");
-            } catch (IOException e) {
+                response.sendError( 406, "Json not valid !" );
+            } catch ( IOException e ) {
                 e.printStackTrace();
             }
         }
@@ -94,23 +96,25 @@ public class SpringController implements io.robusta.rra.Controller {
     }
 
     @Override
-    public String[] getBasicAuthentication(HttpServletRequest req, HttpServletResponse resp) {
-        String authorization = req.getHeader("Authorization");
+    public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp ) {
+        String authorization = req.getHeader( "Authorization" );
         String[] values = new String[2];
-        if (authorization != null && authorization.startsWith("Basic")) {
-            if (req.isSecure()) {
-                String base64Credentials = authorization.substring("Basic".length()).trim();
+        if ( authorization != null && authorization.startsWith( "Basic" ) ) {
+            if ( req.isSecure() ) {
+                String base64Credentials = authorization.substring( "Basic".length() ).trim();
                 CodecImpl codecimpl = new CodecImpl();
                 try {
-                    values[0] = codecimpl.getUsername(base64Credentials);
-                    values[1] = codecimpl.getPassword(base64Credentials);
-                } catch (CodecException e) {
+                    values[0] = codecimpl.getUsername( base64Credentials );
+                    values[1] = codecimpl.getPassword( base64Credentials );
+                } catch ( CodecException e ) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    resp.getWriter().println("<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
-                } catch (IOException e) {
+                    resp.getWriter()
+                            .println(
+                                    "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>" );
+                } catch ( IOException e ) {
                     e.printStackTrace();
                 }
             }
@@ -118,12 +122,11 @@ public class SpringController implements io.robusta.rra.Controller {
         return values;
     }
 
-
     public DefaultClientProperty getClientProperty() {
         return clientProperty;
     }
 
-    public void setClientProperty(DefaultClientProperty clientProperty) {
+    public void setClientProperty( DefaultClientProperty clientProperty ) {
         this.clientProperty = clientProperty;
     }
 

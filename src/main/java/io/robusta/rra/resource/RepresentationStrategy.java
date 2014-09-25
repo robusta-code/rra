@@ -23,7 +23,7 @@
 
 package io.robusta.rra.resource;
 
-import io.robusta.rra.Representation;
+import io.robusta.rra.representation.Representation;
 
 
  /**

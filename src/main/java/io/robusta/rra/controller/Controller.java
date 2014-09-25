@@ -21,12 +21,22 @@
  * under the License.
  */
 
-package io.robusta.rra;
+package io.robusta.rra.controller;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by  Nicolas Zozol for Robusta Code
- *
+ * Created by Nicolas Zozol for Robusta Code
+ * 
  * @author Nicolas Zozol
  */
-public interface Client {
+public interface Controller {
+
+    public boolean validate( HttpServletRequest req, HttpServletResponse resp, String... keys ) throws IOException;
+
+    public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp );
+
 }

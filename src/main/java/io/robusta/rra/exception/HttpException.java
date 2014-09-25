@@ -21,15 +21,31 @@
  * under the License.
  */
 
-package io.robusta.rra;
-
-import io.robusta.rra.representation.implementation.GsonRepresentation;
+package io.robusta.rra.exception;
 
 /**
- * Created by dev on 11/09/14.
+ * This Exception is thrown when an error in the Request is detected before this
+ * request is sent.<br/>
+ * Exemple : malformed URL, or PostBody datas in a GET Request (depending on
+ * implementations).
+ *
+ * <p>
+ * This Exception is typically thrown by a HttpClient.
+ * </p>
+ *
+ * @author Nicolas Zozol
+ * @todo2 : we may find a better name, describing that there is a Client
+ *        exception avoiding sending request
+ * @todo3 : extends RuntimeException
  */
-public class Rra {
+public class HttpException extends RuntimeException {
 
-    public static Representation defaultRepresentation = new GsonRepresentation();
+    public HttpException( String message, Throwable underlyingException ) {
+        super( message, underlyingException );
+    }
+
+    public HttpException( String message ) {
+        super( message );
+    }
 
 }

@@ -21,35 +21,15 @@
  * under the License.
  */
 
-package io.robusta.rra.resource;
+package io.robusta.rra.representation;
 
-import io.robusta.rra.representation.Representation;
+import io.robusta.rra.representation.implementation.GsonRepresentation;
 
-
- /**
- *
- * <p>This interface allows a Resource to choose a Representation with a Strategy (http://en.wikipedia.org/wiki/Strategy_pattern).
- * You can bypass complexity by ignoring Strategies and just implementing #getRepresentation()</p>
- *
- * <p>Most of the time, #getRepresentation() will be this snippet : </p>
- * <code>
- *     public Representation getRepresentation(){
- *         if (this.strategy == null){
- *             // choose a default Representation or throw exception
- *             return new StaxRepresentation(this);
- *         }else{
- *             return this.strategy.getRepresentation();
- *         }
- *     }
- *
- * </code>
- *
- * @author Nicolas Zozol
+/**
+ * Created by dev on 11/09/14.
  */
-public interface HasRepresentation {
+public class Rra {
 
-    void setRepresentationStrategy(RepresentationStrategy strategy);
-    RepresentationStrategy getRepresentationStrategy();
-    Representation getRepresentation();
+    public static Representation defaultRepresentation = new GsonRepresentation();
 
 }
