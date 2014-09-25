@@ -23,7 +23,7 @@
 
 package io.robusta.rra.files;
 
-import io.robusta.rra.Resource;
+import io.robusta.rra.resource.Resource;
 import io.robusta.rra.resource.ResourceSerializer;
 
 import java.util.Map;

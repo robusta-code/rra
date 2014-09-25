@@ -36,12 +36,14 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
-import io.robusta.rra.Representation;
-import io.robusta.rra.Resource;
+
 import io.robusta.rra.representation.JsonRepresentation;
+import io.robusta.rra.representation.Representation;
 import io.robusta.rra.representation.RepresentationException;
+import io.robusta.rra.resource.Resource;
 import io.robusta.rra.resource.ResourceSerializer;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -254,6 +256,11 @@ public class XstreamRepresentation  implements JsonRepresentation<String>{
 
     @Override
     public Representation createNewRepresentation(Object newObject) {
+        return null;
+    }
+
+    @Override
+    public Representation createNewRepresentation(InputStream inputStream) {
         return null;
     }
 

@@ -24,9 +24,8 @@
 package io.robusta.rra.controller;
 
 
-import io.robusta.rra.Controller;
-import io.robusta.rra.Representation;
-import io.robusta.rra.Rra;
+import io.robusta.rra.representation.Representation;
+import io.robusta.rra.representation.Rra;
 import io.robusta.rra.security.implementation.CodecException;
 import io.robusta.rra.security.implementation.CodecImpl;
 
@@ -34,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -56,7 +56,7 @@ public class ServletController extends HttpServlet implements Controller {
 
         String contentType = req.getContentType();
 
-        if (contentType != null && contentType.equals("application/json")) {
+        if (contentType != null && contentType.contains("application/json")) {
             InputStream in = req.getInputStream();
             StringBuffer stringBuffer = new StringBuffer();
             int d;

@@ -21,35 +21,23 @@
  * under the License.
  */
 
-package io.robusta.rra.resource;
+package io.robusta.rra.exception;
 
-import io.robusta.rra.representation.Representation;
-
-
- /**
- *
- * <p>This interface allows a Resource to choose a Representation with a Strategy (http://en.wikipedia.org/wiki/Strategy_pattern).
- * You can bypass complexity by ignoring Strategies and just implementing #getRepresentation()</p>
- *
- * <p>Most of the time, #getRepresentation() will be this snippet : </p>
- * <code>
- *     public Representation getRepresentation(){
- *         if (this.strategy == null){
- *             // choose a default Representation or throw exception
- *             return new StaxRepresentation(this);
- *         }else{
- *             return this.strategy.getRepresentation();
- *         }
- *     }
- *
- * </code>
- *
+/**
+ * This exception is used when there is a problem with a File. In a web service
+ * context, it will often be a Server Exception (500), but it may be due to a
+ * bad parameter in the request(404)
+ * 
  * @author Nicolas Zozol
  */
-public interface HasRepresentation {
+public class FileException extends Exception {
 
-    void setRepresentationStrategy(RepresentationStrategy strategy);
-    RepresentationStrategy getRepresentationStrategy();
-    Representation getRepresentation();
+    public FileException( String message ) {
+        super( message );
+    }
+
+    public FileException( Throwable t ) {
+        super( t );
+    }
 
 }

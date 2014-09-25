@@ -21,7 +21,7 @@
  * under the License.
  */
 
-package io.robusta.rra;
+package io.robusta.rra.resource;
 
 import java.util.Map;
 

@@ -21,10 +21,11 @@
  * under the License.
  */
 
-package io.robusta.rra;
+package io.robusta.rra.representation;
 
-import io.robusta.rra.representation.RepresentationException;
+import io.robusta.rra.resource.Resource;
 
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -211,6 +212,7 @@ public interface Representation<Document> {
      */
     public Representation createNewRepresentation(Object newObject);
 
+    public Representation createNewRepresentation(InputStream inputStream);
 
     public Representation createNewRepresentation();
 
