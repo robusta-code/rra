@@ -30,6 +30,9 @@ import io.robusta.rra.representation.implementation.GsonRepresentation;
  */
 public class Rra {
 
+    /**
+     * 
+     */
     public static Representation defaultRepresentation = new GsonRepresentation();
 
 }

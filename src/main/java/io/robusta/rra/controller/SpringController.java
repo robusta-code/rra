@@ -41,17 +41,30 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * Handles requests for the application home page.
+ * 
+ * @author Nicolas Zozol
  */
 @Controller
 public class SpringController implements io.robusta.rra.controller.Controller {
 
+    /**
+     * 
+     */
     protected DefaultClientProperty clientProperty;
 
+    /**
+     * 
+     */
     @PostConstruct
     public void init() {
         clientProperty = new DefaultClientProperty();
     }
 
+    /**
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @ModelAttribute( "representation" )
     String representation( HttpServletRequest request ) throws IOException {
         String contentType = request.getContentType();
@@ -70,24 +83,41 @@ public class SpringController implements io.robusta.rra.controller.Controller {
         return "representation";
     }
 
+    /**
+     * @param req
+     * @return
+     */
     public Representation getRepresentation( HttpServletRequest req ) {
         return Rra.defaultRepresentation.createNewRepresentation( req.getAttribute( "representation" ).toString() );
     }
 
+    /**
+     * @param representation
+     * @throws ControllerException
+     */
     protected void throwIfNull( Representation representation ) throws ControllerException {
         if ( representation == null ) {
             throw new ControllerException( "Representation is null" );
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.controller.Controller#validate(javax.servlet.http.
+     * HttpServletRequest, javax.servlet.http.HttpServletResponse,
+     * java.lang.String[])
+     */
     @Override
     public boolean validate( HttpServletRequest request, HttpServletResponse response, String... keys ) {
         Representation representation = getRepresentation( request );
         throwIfNull( representation );
         boolean valid = representation.has( keys );
+
         if ( !valid ) {
             try {
-                response.sendError( 406, "Json not valid !" );
+                response.sendError( 406,
+                        "Json not valid ! it hasn't at least one of these keys: " + java.util.Arrays.toString( keys ) );
             } catch ( IOException e ) {
                 e.printStackTrace();
             }
@@ -95,6 +125,13 @@ public class SpringController implements io.robusta.rra.controller.Controller {
         return valid;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.controller.Controller#getBasicAuthentication(javax.servlet
+     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp ) {
         String authorization = req.getHeader( "Authorization" );
@@ -122,10 +159,16 @@ public class SpringController implements io.robusta.rra.controller.Controller {
         return values;
     }
 
+    /**
+     * @return
+     */
     public DefaultClientProperty getClientProperty() {
         return clientProperty;
     }
 
+    /**
+     * @param clientProperty
+     */
     public void setClientProperty( DefaultClientProperty clientProperty ) {
         this.clientProperty = clientProperty;
     }

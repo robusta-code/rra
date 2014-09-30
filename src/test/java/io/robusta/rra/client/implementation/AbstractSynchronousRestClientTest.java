@@ -48,7 +48,7 @@ public class AbstractSynchronousRestClientTest {
     public void tearDown() {
     }
 
-    @Test
+    // @Test
     public void testPOST() {
         expected = "{\"name\":\"name\"}\n";
         for ( AbstractRestClient client : clients ) {
@@ -58,7 +58,7 @@ public class AbstractSynchronousRestClientTest {
         }
     }
 
-    @Test
+    // @Test
     public void testGET() {
         expected = "ok\n";
         for ( AbstractRestClient client : clients ) {
@@ -76,7 +76,7 @@ public class AbstractSynchronousRestClientTest {
     public void testDELETE() {
     }
 
-    @Test
+    // @Test
     public void testEncodeParameter() {
         expected = "12\n";
         for ( AbstractRestClient client : clients ) {

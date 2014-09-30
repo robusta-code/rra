@@ -32,12 +32,21 @@ public enum HttpMethod {
 
     GET( "GET" ), POST( "POST" ), PUT( "PUT" ), DELETE( "DELETE" ), OTHER( null );
 
+    /**
+     * 
+     */
     String method;
 
+    /**
+     * @param method
+     */
     private HttpMethod( String method ) {
         this.method = method;
     }
 
+    /**
+     * @return
+     */
     public String getMethod() {
         if ( method == null ) {
             throw new IllegalArgumentException(

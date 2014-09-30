@@ -74,6 +74,9 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      */
     protected String              contentType        = RestClient.jsonContentType;
 
+    /**
+     * @param contentType
+     */
     public static void setDefaultContentType( String contentType ) {
         defaultContentType = contentType;
         if ( contentType.equals( "xml" ) ) {
@@ -109,9 +112,9 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * all other cases, it will go to the url, such as ?param1=Jo&param2=Bob
      *
      * @param method
-     *            Http method (or Other)
      * @param relativePath
      * @param parameters
+     * @param representation
      * @return result[0] is the full URI, result[1] is the entity
      * @throws io.robusta.rra.exception.HttpException
      */
@@ -147,6 +150,9 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         AbstractRestClient.authorizationValue = authorizationValue;
     }
 
+    /**
+     * @return
+     */
     protected boolean contentTypeIsForm() {
         return this.contentType.contains( "x-www-form-urlencoded" );
     }
@@ -184,19 +190,37 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         AbstractRestClient.applicationUri = applicationUri;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#setNextEntity(java.lang.String)
+     */
     public void setNextEntity( String postBody ) {
         this.entity = postBody;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#getHttpCode()
+     */
     public int getHttpCode() {
         return httpCode;
     }
 
     // TODO
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#getResponse()
+     */
     public String getResponse() {
         return response;
     }
 
+    /**
+     * 
+     */
     public void clean() {
         setNextEntity( "" );
         this.contentType = defaultContentType;
@@ -211,6 +235,12 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      */
     public abstract String encodeParameter( String nameOrValue );
 
+    /**
+     * @param applicationUri
+     * @param relativePath
+     * @param parameters
+     * @return
+     */
     protected String encodeUrl( String applicationUri, String relativePath, CoupleList<String, Object> parameters ) {
         String url = StringUtils.addPath( applicationUri, relativePath );
         StringBuilder result = new StringBuilder( url );
@@ -236,6 +266,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return result.toString();
     }
 
+    /**
+     * @param parameters
+     * @return
+     */
     protected String encodeFormEntity( CoupleList<String, Object> parameters ) {
         StringBuilder result = new StringBuilder();
 
@@ -258,13 +292,21 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return result.toString();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#getHeaderResponse()
+     */
     @Override
     public Map<String, String> getHeaderResponse() {
         return this.responseHeaders;
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#POST(java.lang.String,
+     * io.robusta.rra.representation.Representation)
      */
     @Override
     public String POST( String relativeFileWithNoParam, Representation representation ) throws HttpException {
@@ -273,8 +315,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return executeMethod( HttpMethod.POST, obj[0], obj[1] );
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#GET(java.lang.String,
+     * io.robusta.rra.utils.CoupleList)
      */
     @Override
     public String GET( String relativeFileWithNoParam, CoupleList<String, Object> parameters ) throws HttpException {
@@ -283,8 +328,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return executeMethod( HttpMethod.GET, obj[0], obj[1] );
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#PUT(java.lang.String,
+     * io.robusta.rra.representation.Representation)
      */
     @Override
     public String PUT( String relativeFileWithNoParam, Representation representation ) throws HttpException {
@@ -293,8 +341,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return executeMethod( HttpMethod.PUT, obj[0], obj[1] );
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#DELETE(java.lang.String,
+     * io.robusta.rra.utils.CoupleList)
      */
     @Override
     public String DELETE( String relativeFileWithNoParam, CoupleList<String, Object> parameters ) throws HttpException {
@@ -303,8 +354,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         return executeMethod( HttpMethod.DELETE, obj[0], obj[1] );
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#OTHER(java.lang.String,
+     * java.lang.String, io.robusta.rra.utils.CoupleList)
      */
     @Override
     public String OTHER( String method, String relativeFileWithNoParam, CoupleList<String, Object> parameters )
@@ -327,6 +381,12 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     protected abstract String executeMethod( final HttpMethod method, final String url, final String entity )
             throws HttpException;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#get(java.lang.String,
+     * io.robusta.rra.utils.CoupleList, io.robusta.rra.client.Callback)
+     */
     @Override
     public void get( String relativePath, CoupleList<String, Object> parameters, Callback callback )
             throws HttpException {
@@ -336,6 +396,13 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         executeMethod( HttpMethod.GET, url, body, callback );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#post(java.lang.String,
+     * io.robusta.rra.representation.Representation,
+     * io.robusta.rra.client.Callback)
+     */
     @Override
     public void post( String relativePath, Representation representation, Callback callback ) throws HttpException {
         String[] obj = prepareMethod( HttpMethod.POST, relativePath, null, representation );
@@ -346,6 +413,13 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         executeMethod( HttpMethod.POST, url, body, callback );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#put(java.lang.String,
+     * io.robusta.rra.representation.Representation,
+     * io.robusta.rra.client.Callback)
+     */
     @Override
     public void put( String relativePath, Representation representation, Callback callback ) throws HttpException {
         String[] obj = prepareMethod( HttpMethod.PUT, relativePath, null, representation );
@@ -356,6 +430,12 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         executeMethod( HttpMethod.PUT, url, body, callback );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#delete(java.lang.String,
+     * io.robusta.rra.utils.CoupleList, io.robusta.rra.client.Callback)
+     */
     @Override
     public void delete( String relativePath, CoupleList<String, Object> parameters, Callback callback )
             throws HttpException {
@@ -367,6 +447,13 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
         executeMethod( HttpMethod.DELETE, url, body, callback );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#other(java.lang.String,
+     * java.lang.String, io.robusta.rra.utils.CoupleList,
+     * io.robusta.rra.client.Callback)
+     */
     @Override
     public void other( String method, String relativePath,
             CoupleList<String, Object> parameters, Callback callback )
@@ -381,9 +468,21 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     }
 
     // TODO : add the method getResponse
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#join()
+     */
     @Override
     public abstract void join();
 
+    /**
+     * @param method
+     * @param url
+     * @param entity
+     * @param callback
+     * @throws HttpException
+     */
     protected abstract void executeMethod( final HttpMethod method, final String url, final String entity,
             final Callback callback ) throws HttpException;
 

@@ -58,11 +58,15 @@ import com.google.gson.stream.JsonReader;
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
+ * 
+ * @author Nicolas Zozol
+ *
  */
 public class GsonRepresentation implements JsonRepresentation<JsonElement> {
 
-    Gson        gson = new Gson();
-    JsonElement document;
+    Gson         gson        = new Gson();
+    JsonElement  document;
+    List<String> missingKeys = new ArrayList<String>( 5 );
 
     /**
      * In that case, is serialization if not null, it's always a JsonObject
@@ -73,33 +77,61 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         this.document = gson.toJsonTree( serialization );
     }
 
+    /**
+     * @param object
+     */
     public GsonRepresentation( Object object ) {
         this.document = gson.toJsonTree( object );
     }
 
+    /**
+     * @param json
+     */
     public GsonRepresentation( String json ) {
         this.document = new JsonParser().parse( json );
     }
 
+    /**
+     * @param inputStream
+     */
     public GsonRepresentation( InputStream inputStream ) {
         this.document = new JsonParser().parse( new JsonReader( new InputStreamReader( inputStream ) ) );
     }
 
+    /**
+     * 
+     */
     public GsonRepresentation() {
         this.document = null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#getDocument()
+     */
     @Override
     public JsonElement getDocument() {
         return this.document;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.Class)
+     */
     @Override
     public <T> T get( Class<T> type ) throws RepresentationException {
         return get( type, this.document );
     }
 
     // TODO : rename to map() ?
+    /**
+     * @param type
+     * @param element
+     * @return
+     * @throws RepresentationException
+     */
     protected <T> T get( Class<T> type, JsonElement element ) throws RepresentationException {
 
         if ( type == Long.class ) {
@@ -127,11 +159,22 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.String)
+     */
     @Override
     public String get( String key ) throws RepresentationException {
         return this.get( String.class, key );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> T get( Class<T> type, String key ) throws RepresentationException {
 
@@ -140,6 +183,10 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
 
     }
 
+    /**
+     * @param key
+     * @return
+     */
     protected boolean has( String key ) {
 
         throwIfNotObject( this.document );
@@ -149,6 +196,10 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
 
     }
 
+    /**
+     * @param key
+     * @return
+     */
     protected boolean hasNotEmpty( String key ) {
         throwIfNotObject();
         JsonObject object = this.document.getAsJsonObject();
@@ -162,8 +213,13 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
 
     }
 
-    List<String> missingKeys = new ArrayList<String>( 5 );
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#hasPossiblyEmpty(java.lang
+     * .String[])
+     */
     @Override
     public boolean hasPossiblyEmpty( String... keys ) {
         boolean result = true;
@@ -176,6 +232,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#has(java.lang.String[])
+     */
     @Override
     public boolean has( String... keys ) {
         boolean result = true;
@@ -188,23 +249,39 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#getMissingKeys()
+     */
     @Override
     public List<String> getMissingKeys() {
         return missingKeys;
     }
 
+    /**
+     * 
+     */
     protected void createObjectIfEmtpy() {
         if ( this.document == null ) {
             this.document = new JsonObject();
         }
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNull( JsonElement elt ) throws RepresentationException {
         if ( elt == null ) {
             throw new RepresentationException( "The current element is null" );
         }
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNotObject( JsonElement elt ) throws RepresentationException {
         if ( !elt.isJsonObject() ) {
             throw new RepresentationException( "The current element is not a JSON object but a " + this.getTypeof()
@@ -212,11 +289,18 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    /**
+     * @throws RepresentationException
+     */
     protected void throwIfNotObject() throws RepresentationException {
         throwIfNull( this.document );
         throwIfNotObject( this.document );
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNotArray( JsonElement elt ) throws RepresentationException {
         if ( !elt.isJsonArray() ) {
             throw new RepresentationException( "The current element is not a JSON array but a " + this.getTypeof()
@@ -224,21 +308,36 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    /**
+     * @throws RepresentationException
+     */
     protected void throwIfNotArray() throws RepresentationException {
         throwIfNull( this.document );
         throwIfNotArray( this.document );
     }
 
+    /**
+     * @return
+     */
     protected JsonObject asObject() {
         throwIfNotObject();
         return this.document.getAsJsonObject();
     }
 
+    /**
+     * @return
+     */
     protected JsonArray asArray() {
         throwIfNotArray();
         return this.document.getAsJsonArray();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#set(java.lang.String,
+     * java.lang.String)
+     */
     @Override
     public Representation set( String key, String value ) {
         createObjectIfEmtpy();
@@ -246,6 +345,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#set(java.lang.String,
+     * java.lang.Object)
+     */
     @Override
     public Representation set( String key, Object value ) {
         createObjectIfEmtpy();
@@ -253,6 +358,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#getValues(java.lang.String)
+     */
     @Override
     public List<String> getValues( String key ) throws RepresentationException {
         List<String> list = new ArrayList<String>();
@@ -263,6 +374,13 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
     }
 
     // TODO : Not tested. If it works here, that's great !!
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#getValues(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> List<T> getValues( Class<T> type, String key ) throws RepresentationException {
         List<T> list = new ArrayList<T>();
@@ -272,6 +390,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return list;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#add(java.lang.String,
+     * java.lang.Object)
+     */
     @Override
     public Representation add( String key, Object value ) {
         throwIfNotObject();
@@ -280,6 +404,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#add(java.lang.String,
+     * io.robusta.rra.resource.Resource, boolean)
+     */
     @Override
     public Representation add( String key, Resource resource, boolean eager ) {
         throwIfNotObject();
@@ -291,6 +421,13 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#addAll(java.lang.String,
+     * java.util.List)
+     */
     @Override
     public Representation addAll( String key, List values ) {
         throwIfNotObject();
@@ -303,6 +440,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#merge(java.lang.String,
+     * java.lang.String, io.robusta.rra.representation.Representation)
+     */
     @Override
     public Representation merge( String keyForCurrent, String keyForNew, Representation representation ) {
         if ( !( representation instanceof GsonRepresentation ) ) {
@@ -317,6 +460,12 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return mergedRepresentation;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#remove(java.lang.String)
+     */
     @Override
     public Representation remove( String key ) throws RepresentationException {
         int i = 0;
@@ -347,6 +496,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#fetch(java.lang.String)
+     */
     @Override
     public Representation fetch( String key ) {
         throwIfNotObject();
@@ -385,6 +539,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#copy()
+     */
     @Override
     public Representation copy() {
         String serialization = gson.toJson( this.document );
@@ -394,26 +553,60 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return representation;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.lang.Object)
+     */
     @Override
     public Representation createNewRepresentation( Object newObject ) {
         return new GsonRepresentation( newObject );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.lang.String)
+     */
     @Override
     public Representation createNewRepresentation( String json ) {
         return new GsonRepresentation( json );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.io.InputStream)
+     */
     @Override
     public Representation createNewRepresentation( InputStream inputStream ) {
         return new GsonRepresentation( inputStream );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation()
+     */
     @Override
     public Representation createNewRepresentation() {
         return new GsonRepresentation();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#addToArray(io.robusta
+     * .rra.resource.Resource, boolean)
+     */
     @Override
     public Representation addToArray( Resource resource, boolean eager ) {
         throwIfNotArray();
@@ -424,6 +617,13 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#addToArray(java.lang
+     * .Object)
+     */
     @Override
     public Representation addToArray( Object value ) {
         throwIfNotArray();
@@ -432,6 +632,13 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#pluck(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> List<T> pluck( Class<T> type, String key ) throws RepresentationException {
         throwIfNotArray();
@@ -442,16 +649,31 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isPrimitive()
+     */
     @Override
     public boolean isPrimitive() {
         return this.document.isJsonPrimitive();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isObject()
+     */
     @Override
     public boolean isObject() {
         return this.document.isJsonObject();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isBoolean()
+     */
     @Override
     public boolean isBoolean() {
         // checking that it' a primitive
@@ -463,31 +685,60 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isString()
+     */
     @Override
     public boolean isString() {
         return isString( this.document );
     }
 
+    /**
+     * @param elt
+     * @return
+     */
     private boolean isString( JsonElement elt ) {
         return elt.isJsonPrimitive() && (
                 elt.toString().trim().startsWith( "\"" ) || elt.toString().trim().startsWith( "'" ) );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isNumber()
+     */
     @Override
     public boolean isNumber() {
         return this.document.isJsonPrimitive() && !this.isBoolean() && !this.isString();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isArray()
+     */
     @Override
     public boolean isArray() {
         return this.document.isJsonArray();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isNull()
+     */
     @Override
     public boolean isNull() {
         return this.document.isJsonNull();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#getTypeof()
+     */
     @Override
     public JsonType getTypeof() {
         if ( this.isString() ) {
@@ -506,6 +757,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
             throw new IllegalStateException( "Can't find the type of this document" );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#createObject()
+     */
     @Override
     public Representation<JsonElement> createObject() {
         if ( this.document != null ) {
@@ -516,6 +772,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#createArray()
+     */
     @Override
     public Representation<JsonElement> createArray() {
         if ( this.document != null ) {
@@ -526,6 +787,10 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return this;
     }
 
+    /**
+     * @param type
+     * @return
+     */
     protected JsonType getJsonType( Class type ) {
         if ( type == Integer.class || type == Long.class || type == Integer.class || type == Integer.class ) {
             return JsonType.NUMBER;
@@ -535,6 +800,11 @@ public class GsonRepresentation implements JsonRepresentation<JsonElement> {
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return this.document.toString();

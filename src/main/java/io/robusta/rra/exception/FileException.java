@@ -32,10 +32,16 @@ package io.robusta.rra.exception;
  */
 public class FileException extends Exception {
 
+    /**
+     * @param message
+     */
     public FileException( String message ) {
         super( message );
     }
 
+    /**
+     * @param t
+     */
     public FileException( Throwable t ) {
         super( t );
     }

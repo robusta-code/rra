@@ -30,10 +30,16 @@ package io.robusta.rra.exception;
  */
 public class ValidationException extends Exception {
 
+    /**
+     * @param message
+     */
     public ValidationException( String message ) {
         super( message );
     }
 
+    /**
+     * 
+     */
     public ValidationException() {
     }
 

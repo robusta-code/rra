@@ -28,12 +28,25 @@ import io.robusta.rra.representation.Representation;
 
 import java.io.InputStream;
 
+/**
+ * @author Nicolas Zozol
+ *
+ */
 public class SimpleCallback implements Callback {
 
+    /**
+     * 
+     */
     public static boolean debug = true;
 
+    /**
+     * 
+     */
     RestClient            client;
 
+    /**
+     * @param client
+     */
     public SimpleCallback( RestClient client ) {
         this.client = client;
     }
@@ -51,6 +64,11 @@ public class SimpleCallback implements Callback {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.Callback#onSuccess(java.io.InputStream)
+     */
     @Override
     public void onSuccess( InputStream inputStream ) {
         if ( debug ) {
@@ -58,12 +76,19 @@ public class SimpleCallback implements Callback {
         }
     }
 
+    /**
+     * @param response
+     */
     public void onSuccess( Representation response ) {
         if ( debug ) {
             System.out.println( "Debug SimpleCallback : Successful request" );
         }
     }
 
+    /**
+     * @param clazz
+     * @param response
+     */
     public <T> void onSuccess( Class<T> clazz, T response ) {
 
         if ( debug ) {
@@ -84,9 +109,10 @@ public class SimpleCallback implements Callback {
         }
     }
 
-    /**
-     * This implementation doesn't do anything. Overwrite it to extend
-     * functionnalities.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.Callback#onComplete()
      */
     @Override
     public void onComplete() {
@@ -95,17 +121,20 @@ public class SimpleCallback implements Callback {
         }
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.Callback#getClient()
      */
     @Override
     public RestClient getClient() {
         return this.client;
     }
 
-    /**
-     * This implementation throws a new RuntimeException. Overwrite it to extend
-     * functionnalities.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.Callback#onException(java.lang.Exception)
      */
     @Override
     public void onException( Exception exception ) {

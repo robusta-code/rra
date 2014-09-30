@@ -28,16 +28,26 @@ package io.robusta.rra.representation;
  */
 public class RepresentationException extends RuntimeException {
 
-    public RepresentationException(Throwable t) {
-        super(t);
+    /**
+     * @param t
+     */
+    public RepresentationException( Throwable t ) {
+        super( t );
     }
 
-    public RepresentationException(String message) {
-        super(message);
+    /**
+     * @param message
+     */
+    public RepresentationException( String message ) {
+        super( message );
 
     }
 
-    public RepresentationException( String message, Exception ex) {
-        super(message,ex);
+    /**
+     * @param message
+     * @param ex
+     */
+    public RepresentationException( String message, Exception ex ) {
+        super( message, ex );
     }
 }

@@ -30,7 +30,7 @@ import java.io.InputStream;
 /**
  * Callback called after a request is done.
  * 
- * @author robusta web
+ * @author Nicolas Zozol
  */
 public interface Callback {
 
@@ -49,6 +49,9 @@ public interface Callback {
      */
     public void onSuccess( String response );
 
+    /**
+     * @param inputStream
+     */
     public void onSuccess( InputStream inputStream );
 
     /**
@@ -64,8 +67,14 @@ public interface Callback {
     public void onFailure( RestException failure );
 
     // TODO : httpException not compatible with Gwt ?
+    /**
+     * @param exception
+     */
     public void onException( Exception exception );
 
+    /**
+     * 
+     */
     public void onComplete();
 
 }

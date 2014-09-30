@@ -53,6 +53,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
+ * 
+ * @author Nicolas Zozol
  */
 public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
@@ -69,11 +71,17 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         this.document = mapper.convertValue( serialization, JsonNode.class );
     }
 
+    /**
+     * @param object
+     */
     public JacksonRepresentation( Object object ) {
         // this.document = mapper.convertValue(object, JsonNode.class);
         this.document = mapper.valueToTree( object );
     }
 
+    /**
+     * @param json
+     */
     public JacksonRepresentation( String json ) {
         try {
             // this.document = mapper.readTree( json );
@@ -83,6 +91,9 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         }
     }
 
+    /**
+     * @param inputStream
+     */
     public JacksonRepresentation( InputStream inputStream ) {
         try {
             this.document = mapper.readValue( inputStream, JsonNode.class );
@@ -91,15 +102,26 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         }
     }
 
+    /**
+     * 
+     */
     public JacksonRepresentation() {
         this.document = null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#getDocument()
+     */
     @Override
     public JsonNode getDocument() {
         return this.document;
     }
 
+    /**
+     * 
+     */
     protected void createObjectIfEmtpy() {
         if ( this.document == null ) {
             this.document = mapper.createObjectNode();
@@ -107,11 +129,22 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     // TODO
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.Class)
+     */
     @Override
     public <T> T get( Class<T> type ) throws RepresentationException {
         return get( type, this.document );
     }
 
+    /**
+     * @param type
+     * @param element
+     * @return
+     * @throws RepresentationException
+     */
     protected <T> T get( Class<T> type, JsonNode element ) throws RepresentationException {
         try {
             return mapper.treeToValue( element, type );
@@ -122,33 +155,58 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.String)
+     */
     @Override
     public String get( String key ) throws RepresentationException {
         return this.get( String.class, key );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#get(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> T get( Class<T> type, String key ) throws RepresentationException {
         JsonNode element = this.document.get( key );
         return get( type, element );
     }
 
+    /**
+     * @return
+     */
     protected ObjectNode asObject() {
         throwIfNotObject();
         return (ObjectNode) this.document;
     }
 
+    /**
+     * @return
+     */
     protected ArrayNode asArray() {
         throwIfNotArray();
         return (ArrayNode) this.document;
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNull( JsonNode elt ) throws RepresentationException {
         if ( elt == null ) {
             throw new RepresentationException( "The current element is null" );
         }
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNotArray( JsonNode elt ) throws RepresentationException {
         if ( !elt.isArray() ) {
             throw new RepresentationException( "The current element is not a JSON array but a " + this.getTypeof()
@@ -156,11 +214,18 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         }
     }
 
+    /**
+     * @throws RepresentationException
+     */
     protected void throwIfNotArray() throws RepresentationException {
         throwIfNull( this.document );
         throwIfNotArray( this.document );
     }
 
+    /**
+     * @param elt
+     * @throws RepresentationException
+     */
     protected void throwIfNotObject( JsonNode elt ) throws RepresentationException {
         if ( !elt.isObject() ) {
             throw new RepresentationException( "The current element is not a JSON object but a " + this.getTypeof()
@@ -168,16 +233,33 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         }
     }
 
+    /**
+     * @throws RepresentationException
+     */
     protected void throwIfNotObject() throws RepresentationException {
         throwIfNull( this.document );
         throwIfNotObject( this.document );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#addToArray(io.robusta
+     * .rra.resource.Resource, boolean)
+     */
     @Override
     public Representation addToArray( Resource resource, boolean eager ) {
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#addToArray(java.lang
+     * .Object)
+     */
     @Override
     public Representation addToArray( Object value ) {
         throwIfNotArray();
@@ -186,6 +268,13 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
     }
 
     // TODO
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.JsonRepresentation#pluck(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> List<T> pluck( Class<T> type, String key ) throws RepresentationException {
         throwIfNotArray();
@@ -196,42 +285,82 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isPrimitive()
+     */
     @Override
     public boolean isPrimitive() {
         return ( this.document.isBoolean() && this.document.isShort() && this.document.isInt()
                 && this.document.isLong() && this.document.isFloat() && this.document.isDouble() );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isObject()
+     */
     @Override
     public boolean isObject() {
         return this.document.isObject();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isBoolean()
+     */
     @Override
     public boolean isBoolean() {
         return this.document.isBoolean();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isString()
+     */
     @Override
     public boolean isString() {
         return this.document.isTextual();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isNumber()
+     */
     @Override
     public boolean isNumber() {
         return this.document.isNumber();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isArray()
+     */
     @Override
     public boolean isArray() {
         return this.document.isArray();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#isNull()
+     */
     @Override
     public boolean isNull() {
         return this.document.isNull();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#getTypeof()
+     */
     @Override
     public JsonType getTypeof() {
         if ( this.isString() ) {
@@ -250,6 +379,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
             throw new IllegalStateException( "Can't find the type of this document" );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#createObject()
+     */
     @Override
     public Representation<JsonNode> createObject() {
         if ( this.document != null ) {
@@ -260,6 +394,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.JsonRepresentation#createArray()
+     */
     @Override
     public Representation<JsonNode> createArray() {
         if ( this.document != null ) {
@@ -270,6 +409,10 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /**
+     * @param key
+     * @return
+     */
     protected boolean has( String key ) {
 
         throwIfNotObject( this.document );
@@ -277,6 +420,10 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     }
 
+    /**
+     * @param key
+     * @return
+     */
     protected boolean hasNotEmpty( String key ) {
         throwIfNotObject();
         JsonNode elt = asObject().get( key );
@@ -289,6 +436,13 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#hasPossiblyEmpty(java.lang
+     * .String[])
+     */
     @Override
     public boolean hasPossiblyEmpty( String... keys ) {
         boolean result = true;
@@ -301,6 +455,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#has(java.lang.String[])
+     */
     @Override
     public boolean has( String... keys ) {
         boolean result = true;
@@ -313,11 +472,22 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return result;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#getMissingKeys()
+     */
     @Override
     public List<String> getMissingKeys() {
         return missingKeys;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#set(java.lang.String,
+     * java.lang.String)
+     */
     @Override
     public Representation set( String key, String value ) {
         throwIfNotObject();
@@ -326,6 +496,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#set(java.lang.String,
+     * java.lang.Object)
+     */
     @Override
     public Representation set( String key, Object value ) {
         throwIfNotObject();
@@ -334,6 +510,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#getValues(java.lang.String)
+     */
     @Override
     public List<String> getValues( String key ) throws RepresentationException {
         List<String> list = new ArrayList<String>();
@@ -343,6 +525,13 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return list;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#getValues(java.lang.Class,
+     * java.lang.String)
+     */
     @Override
     public <T> List<T> getValues( Class<T> type, String key ) throws RepresentationException {
         List<T> list = new ArrayList<T>();
@@ -352,6 +541,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return list;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#add(java.lang.String,
+     * java.lang.Object)
+     */
     @Override
     public Representation add( String key, Object value ) {
         throwIfNotObject();
@@ -360,6 +555,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#add(java.lang.String,
+     * io.robusta.rra.resource.Resource, boolean)
+     */
     @Override
     public Representation add( String key, Resource resource, boolean eager ) {
         throwIfNotObject();
@@ -369,6 +570,13 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#addAll(java.lang.String,
+     * java.util.List)
+     */
     @Override
     public Representation addAll( String key, List values ) {
         throwIfNotObject();
@@ -379,6 +587,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#merge(java.lang.String,
+     * java.lang.String, io.robusta.rra.representation.Representation)
+     */
     @Override
     public Representation merge( String keyForCurrent, String keyForNew, Representation representation ) {
         if ( !( representation instanceof JacksonRepresentation ) ) {
@@ -393,6 +607,12 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return mergedRepresentation;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#remove(java.lang.String)
+     */
     @Override
     public Representation remove( String key ) throws RepresentationException {
         throwIfNotObject();
@@ -424,6 +644,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return this;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#fetch(java.lang.String)
+     */
     @Override
     public Representation fetch( String key ) {
         throwIfNotObject();
@@ -463,6 +688,11 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.representation.Representation#copy()
+     */
     @Override
     public Representation copy() {
         String serialization = this.document.toString();
@@ -477,26 +707,58 @@ public class JacksonRepresentation implements JsonRepresentation<JsonNode> {
         return representation;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.lang.Object)
+     */
     @Override
     public Representation createNewRepresentation( Object newObject ) {
         return new JacksonRepresentation( newObject );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.io.InputStream)
+     */
     @Override
     public Representation createNewRepresentation( InputStream inputStream ) {
         return new JacksonRepresentation( inputStream );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation(
+     * java.lang.String)
+     */
     @Override
     public Representation createNewRepresentation( String json ) {
         return new JacksonRepresentation( json );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.representation.Representation#createNewRepresentation()
+     */
     @Override
     public Representation createNewRepresentation() {
         return new JacksonRepresentation();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return this.document.toString();

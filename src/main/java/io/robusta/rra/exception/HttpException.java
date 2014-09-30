@@ -40,10 +40,17 @@ package io.robusta.rra.exception;
  */
 public class HttpException extends RuntimeException {
 
+    /**
+     * @param message
+     * @param underlyingException
+     */
     public HttpException( String message, Throwable underlyingException ) {
         super( message, underlyingException );
     }
 
+    /**
+     * @param message
+     */
     public HttpException( String message ) {
         super( message );
     }

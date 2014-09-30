@@ -26,29 +26,50 @@ package io.robusta.rra.controller;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by dev on 10/09/14.
+ * @author Nicolas Zozol
+ *
  */
 public class DefaultClientProperty {
 
-
-    private String getAgent(HttpServletRequest request){
-        return request.getHeader("user-agent");
+    /**
+     * @param request
+     * @return
+     */
+    private String getAgent( HttpServletRequest request ) {
+        return request.getHeader( "user-agent" );
     }
 
-    public boolean isChrome(HttpServletRequest request) {
-        return (getAgent(request).toUpperCase().contains("CHROME"));
+    /**
+     * @param request
+     * @return
+     */
+    public boolean isChrome( HttpServletRequest request ) {
+        return ( getAgent( request ).toUpperCase().contains( "CHROME" ) );
     }
 
-    public boolean isFirefox(HttpServletRequest request) {
-        return (getAgent(request).toUpperCase().contains("FIREFOX"));
+    /**
+     * @param request
+     * @return
+     */
+    public boolean isFirefox( HttpServletRequest request ) {
+        return ( getAgent( request ).toUpperCase().contains( "FIREFOX" ) );
     }
 
-    public boolean isTablet(HttpServletRequest request) {
-        return (getAgent(request).toUpperCase().contains("TABLET") || getAgent(request).toUpperCase().contains("IPAD")) ;
+    /**
+     * @param request
+     * @return
+     */
+    public boolean isTablet( HttpServletRequest request ) {
+        return ( getAgent( request ).toUpperCase().contains( "TABLET" ) || getAgent( request ).toUpperCase().contains(
+                "IPAD" ) );
     }
 
-    public boolean isMobile(HttpServletRequest request) {
-        return (getAgent(request).toUpperCase().contains("MOBILE"));
+    /**
+     * @param request
+     * @return
+     */
+    public boolean isMobile( HttpServletRequest request ) {
+        return ( getAgent( request ).toUpperCase().contains( "MOBILE" ) );
     }
 
 }

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simple REST Http client wrapping the Sun Client. Compare to Apache, many JVM
+ * Simple REST Http client wrapping the JDK Client. Compare to Apache, many JVM
  * have this client. Created by Nicolas Zozol for Robusta Code
  * 
  * @author Nicolas Zozol
@@ -63,8 +63,12 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
         JdkRestClient.applicationUri = applicationUri;
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.client.AbstractRestClient#executeMethod(io.robusta.rra
+     * .client.HttpMethod, java.lang.String, java.lang.String)
      */
     @Override
     protected String executeMethod( final HttpMethod method, final String url, final String entity )
@@ -120,13 +124,13 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
         }
     }
 
-    /**
-     * @todo1 : should go in a Responsability class
-     * @param method
-     * @param url
-     * @param entity
-     * @param callback
-     * @throws HttpException
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.client.AbstractRestClient#executeMethod(io.robusta.rra
+     * .client.HttpMethod, java.lang.String, java.lang.String,
+     * io.robusta.rra.client.Callback)
      */
     @Override
     protected void executeMethod( final HttpMethod method, final String url, final String entity,
@@ -186,8 +190,10 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
 
     }
 
-    /**
-     * @{@inheritDoc
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.AbstractRestClient#join()
      */
     @Override
     public void join() {
@@ -198,6 +204,10 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
         }
     }
 
+    /**
+     * @param http
+     * @return
+     */
     private Map<String, String> readHeaders( HttpURLConnection http ) {
         Map<String, List<String>> maps = http.getHeaderFields();
         Map<String, String> map = new HashMap<String, String>();
@@ -207,8 +217,12 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
         return map;
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * io.robusta.rra.client.AbstractRestClient#encodeParameter(java.lang.String
+     * )
      */
     @Override
     public String encodeParameter( String nameOrValue ) {
@@ -228,14 +242,22 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
         JdkRestClient.proxy = proxy;
     }
 
-    /**
-     * {@inheritDoc }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.RestClient#getUnderlyingClient()
      */
     @Override
     public HttpURLConnection getUnderlyingClient() {
         return http;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see io.robusta.rra.client.AbstractRestClient#OTHER(java.lang.String,
+     * java.lang.String, io.robusta.rra.utils.CoupleList)
+     */
     @Override
     public String OTHER( String method, String relativeFileWithNoParam, CoupleList<String, Object> parameters )
             throws HttpException {

@@ -29,6 +29,11 @@ import io.robusta.rra.utils.CoupleList;
 
 import java.util.Map;
 
+/**
+ * @author Nicolas Zozol
+ *
+ * @param <Client>
+ */
 public interface RestClient<Client> {
 
     /**
@@ -45,8 +50,14 @@ public interface RestClient<Client> {
      */
     public static String formContentType = "application/x-www-form-urlencoded; charset=utf-8";
 
+    /**
+     * 
+     */
     public static String jsonContentType = "application/json; charset=utf-8";
 
+    /**
+     * @param uri
+     */
     public void setApplicationUri( String uri );
 
     /**
@@ -90,6 +101,9 @@ public interface RestClient<Client> {
      */
     public String getResponse();
 
+    /**
+     * @return
+     */
     public Map<String, String> getHeaderResponse();
 
     /**
@@ -258,10 +272,28 @@ public interface RestClient<Client> {
     public void get( String relativePath, CoupleList<String, Object> parameters, Callback callback )
             throws HttpException;
 
+    /**
+     * @param relativePath
+     * @param representation
+     * @param callback
+     * @throws HttpException
+     */
     public void post( String relativePath, Representation representation, Callback callback ) throws HttpException;
 
+    /**
+     * @param relativePath
+     * @param representation
+     * @param callback
+     * @throws HttpException
+     */
     public void put( String relativePath, Representation representation, Callback callback ) throws HttpException;
 
+    /**
+     * @param relativePath
+     * @param parameters
+     * @param callback
+     * @throws HttpException
+     */
     public void delete( String relativePath, CoupleList<String, Object> parameters, Callback callback )
             throws HttpException;
 
@@ -277,6 +309,9 @@ public interface RestClient<Client> {
     public void other( String method, String relativePath, CoupleList<String, Object> parameters, Callback callback )
             throws HttpException;
 
+    /**
+     * 
+     */
     public void join();
 
 }

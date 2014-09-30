@@ -28,16 +28,26 @@ package io.robusta.rra.controller;
  */
 public class ControllerException extends RuntimeException {
 
-    public ControllerException(Throwable t) {
-        super(t);
+    /**
+     * @param t
+     */
+    public ControllerException( Throwable t ) {
+        super( t );
     }
 
-    public ControllerException(String message) {
-        super(message);
+    /**
+     * @param message
+     */
+    public ControllerException( String message ) {
+        super( message );
 
     }
 
-    public ControllerException(String message, Exception ex) {
-        super(message,ex);
+    /**
+     * @param message
+     * @param ex
+     */
+    public ControllerException( String message, Exception ex ) {
+        super( message, ex );
     }
 }

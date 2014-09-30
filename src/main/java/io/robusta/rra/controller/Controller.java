@@ -35,8 +35,20 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface Controller {
 
+    /**
+     * @param req
+     * @param resp
+     * @param keys
+     * @return
+     * @throws IOException
+     */
     public boolean validate( HttpServletRequest req, HttpServletResponse resp, String... keys ) throws IOException;
 
+    /**
+     * @param req
+     * @param resp
+     * @return
+     */
     public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp );
 
 }

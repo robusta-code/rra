@@ -15,42 +15,73 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
- * Created by Stephanie Pitou on 12/09/14.
+ * @author Nicolas Zozol
  */
 public class JaxRsController {
 
     public static Representation defaultRepresentation = Rra.defaultRepresentation;
 
+    /**
+     * 
+     */
     @Context
     HttpHeaders                  httpHeader;
+    /**
+     * 
+     */
     @Context
     UriInfo                      uriInfo;
+    /**
+     * 
+     */
     @Context
     Response                     response;
+    /**
+     * 
+     */
     @Context
     Request                      request;
 
+    /**
+     * @return
+     */
     public HttpHeaders getHttpHeader() {
         return httpHeader;
     }
 
+    /**
+     * @return
+     */
     public UriInfo getUriInfo() {
         return uriInfo;
     }
 
+    /**
+     * @return
+     */
     public MultivaluedMap<String, String> getHeaders() {
         return getHttpHeader().getRequestHeaders();
     }
 
+    /**
+     * @return
+     */
     public boolean isJsonApplication() {
         List<String> type = getHeaders().get( "content-type" );
         return ( type.get( 0 ) != null && type.get( 0 ).equals( "application/json" ) );
     }
 
+    /**
+     * @param uriInfo
+     * @return
+     */
     public boolean isSecure( UriInfo uriInfo ) {
         return uriInfo.getAbsolutePath().toString().contains( "https" );
     }
 
+    /**
+     * @return
+     */
     public String[] getBasicAuthentification() {
         String[] values = new String[2];
         List<String> authorization = getHeaders().get( "authorization" );
@@ -67,6 +98,9 @@ public class JaxRsController {
         return values;
     }
 
+    /**
+     * @return
+     */
     public Response getBasicAuthentificationResponse() {
         if ( !isSecure( getUriInfo() ) ) {
             return response
@@ -78,22 +112,40 @@ public class JaxRsController {
             return response.status( 200 ).entity( "The authentification is secure !" ).build();
     }
 
+    /**
+     * @param representation
+     * @throws ControllerException
+     */
     protected void throwIfNull( Representation representation ) throws ControllerException {
         if ( representation == null ) {
             throw new ControllerException( "Representation is null" );
         }
     }
 
+    /**
+     * @param requestEntity
+     * @return
+     */
     public Representation getRepresentation( String requestEntity ) {
         return defaultRepresentation.createNewRepresentation( getRequestEntity( requestEntity ) );
     }
 
+    /**
+     * @param requestEntity
+     * @param keys
+     * @return
+     */
     public boolean validate( String requestEntity, String... keys ) {
         Representation representation = getRepresentation( requestEntity );
         throwIfNull( representation );
         return representation.has( keys );
     }
 
+    /**
+     * @param requestEntity
+     * @param keys
+     * @return
+     */
     public Response validateResponse( String requestEntity, String... keys ) {
         if ( !validate( requestEntity, keys ) ) {
             return response.status( 406 ).entity( "Json representation is not valid !" ).build();
@@ -101,27 +153,46 @@ public class JaxRsController {
             return response.status( 200 ).entity( requestEntity ).build();
     }
 
+    /**
+     * @param requestEntity
+     * @return
+     */
     public String getRequestEntity( String requestEntity ) {
         return requestEntity;
     }
 
+    /**
+     * @return
+     */
     public List<String> getUserAgent() {
         return getHeaders().get( "user-agent" );
     }
 
+    /**
+     * @return
+     */
     public boolean isChrome() {
         return getUserAgent().get( 0 ).toUpperCase().contains( "CHROME" );
     }
 
+    /**
+     * @return
+     */
     public boolean isFirefox() {
         return getUserAgent().get( 0 ).toUpperCase().contains( "FIREFOX" );
     }
 
+    /**
+     * @return
+     */
     public boolean isTablet() {
         return getUserAgent().get( 0 ).toUpperCase().contains( "TABLET" )
                 || getUserAgent().get( 0 ).toUpperCase().contains( "IPAD" );
     }
 
+    /**
+     * @return
+     */
     public boolean isMobile() {
         return getUserAgent().get( 0 ).toUpperCase().contains( "MOBILE" );
     }
