@@ -38,12 +38,12 @@ public class AbstractAsynchronousRestClientJDKTest {
 	public static void tearDownClass() throws Exception {
 	}
 
-	// @Before
-	// public void setUp() {
-	// client = new JdkRestClient( "http://localhost:8080/classify" );
-	// }
+	 @Before
+	 public void setUp() {
+	 client = new JdkRestClient( "http://localhost:8080/classify" );
+	 }
 
-	// @After
+	 @After
 	public void tearDown() {
 	}
 
@@ -51,7 +51,7 @@ public class AbstractAsynchronousRestClientJDKTest {
 	public void testSetApplicationUri() {
 	}
 
-	// @Test
+//	 @Test
 	public void testSetAuthorizationValue() throws Exception {
 		client.setAuthorizationValue("James Bond");
 
@@ -75,7 +75,7 @@ public class AbstractAsynchronousRestClientJDKTest {
 			}
 		};
 
-		client.post("spring", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
+		client.post("api/ad/gson", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
 		client.join();
 		System.out.println("client.getHttpCode()=" + client.getHttpCode());
 		assertTrue(client.getHttpCode() < 300);
@@ -99,7 +99,7 @@ public class AbstractAsynchronousRestClientJDKTest {
 	public void testExecuteMethod() {
 	}
 
-	// @Test
+	 @Test
 	public void testExecutePost() throws Exception {
 
 		Callback cb = new SimpleCallback(client) {
@@ -122,7 +122,7 @@ public class AbstractAsynchronousRestClientJDKTest {
 			}
 		};
 
-		client.post("spring", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
+		client.post("api/ad/gson", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
 		client.join();
 		System.out.println("client.getHttpCode()=" + client.getHttpCode());
 		assertTrue(client.getHttpCode() < 300);

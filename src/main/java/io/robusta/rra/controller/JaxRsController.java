@@ -17,183 +17,215 @@ import javax.ws.rs.core.UriInfo;
 /**
  * @author Nicolas Zozol
  */
+/**
+ * @author dev
+ *
+ */
 public class JaxRsController {
 
-    public static Representation defaultRepresentation = Rra.defaultRepresentation;
+	public static Representation defaultRepresentation = Rra.defaultRepresentation;
 
-    /**
+	/**
      * 
      */
-    @Context
-    HttpHeaders                  httpHeader;
-    /**
+	@Context
+	HttpHeaders httpHeader;
+	/**
      * 
      */
-    @Context
-    UriInfo                      uriInfo;
-    /**
+	@Context
+	UriInfo uriInfo;
+	/**
      * 
      */
-    @Context
-    Response                     response;
-    /**
+	@Context
+	Response response;
+	/**
      * 
      */
-    @Context
-    Request                      request;
+	@Context
+	Request request;
 
-    /**
-     * @return
-     */
-    public HttpHeaders getHttpHeader() {
-        return httpHeader;
-    }
+	/**
+	 * retrieve the header of the request
+	 * @return
+	 */
+	public HttpHeaders getHttpHeader() {
+		return httpHeader;
+	}
 
-    /**
-     * @return
-     */
-    public UriInfo getUriInfo() {
-        return uriInfo;
-    }
+	/**
+	 * retrieve the uri info of the request
+	 * @return
+	 */
+	public UriInfo getUriInfo() {
+		return uriInfo;
+	}
 
-    /**
-     * @return
-     */
-    public MultivaluedMap<String, String> getHeaders() {
-        return getHttpHeader().getRequestHeaders();
-    }
+	/**
+	 * retrieve the header fields of the http request
+	 * @return
+	 */
+	public MultivaluedMap<String, String> getHeaders() {
+		return getHttpHeader().getRequestHeaders();
+	}
 
-    /**
-     * @return
-     */
-    public boolean isJsonApplication() {
-        List<String> type = getHeaders().get( "content-type" );
-        return ( type.get( 0 ) != null && type.get( 0 ).equals( "application/json" ) );
-    }
+	/**
+	 * check if the content-type of the header is a "application/json"
+	 * @return
+	 */
+	public boolean isJsonApplication() {
+		List<String> type = getHeaders().get("content-type");
+		return (type.get(0) != null && type.get(0).equals("application/json"));
+	}
 
-    /**
-     * @param uriInfo
-     * @return
-     */
-    public boolean isSecure( UriInfo uriInfo ) {
-        return uriInfo.getAbsolutePath().toString().contains( "https" );
-    }
+	/**
+	 *check if the uri is secure 
+	 * @param uriInfo
+	 * @return
+	 */
+	public boolean isSecure(UriInfo uriInfo) {
+		return uriInfo.getAbsolutePath().toString().contains("https");
+	}
 
-    /**
-     * @return
-     */
-    public String[] getBasicAuthentification() {
-        String[] values = new String[2];
-        List<String> authorization = getHeaders().get( "authorization" );
-        if ( authorization.get( 0 ) != null && authorization.get( 0 ).startsWith( "Basic" ) ) {
-            String base64Credentials = authorization.get( 0 ).substring( "Basic".length() ).trim();
-            CodecImpl codecimpl = new CodecImpl();
-            try {
-                values[0] = codecimpl.getUsername( base64Credentials );
-                values[1] = codecimpl.getPassword( base64Credentials );
-            } catch ( CodecException e ) {
-                e.printStackTrace();
-            }
-        }
-        return values;
-    }
+	/**
+	 * return the username and the password of the header's authorization
+	 * @return
+	 */
+	public String[] getBasicAuthentification() {
+		String[] values = new String[2];
+		List<String> authorization = getHeaders().get("authorization");
+		if (authorization.get(0) != null && authorization.get(0).startsWith("Basic")) {
+			String base64Credentials = authorization.get(0).substring("Basic".length()).trim();
+			CodecImpl codecimpl = new CodecImpl();
+			try {
+				values[0] = codecimpl.getUsername(base64Credentials);
+				values[1] = codecimpl.getPassword(base64Credentials);
+			} catch (CodecException e) {
+				e.printStackTrace();
+			}
+		}
+		return values;
+	}
 
-    /**
-     * @return
-     */
-    public Response getBasicAuthentificationResponse() {
-        if ( !isSecure( getUriInfo() ) ) {
-            return response
-                    .status( 401 )
-                    .entity(
-                            "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>" )
-                    .build();
-        } else
-            return response.status( 200 ).entity( "The authentification is secure !" ).build();
-    }
+	/**
+	 * check if the uri is secure and update the response
+	 * @return
+	 */
+	public Response getBasicAuthentificationResponse() {
+		if (!isSecure(getUriInfo())) {
+			return ok(426, "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
+		} else
+			return ok(200, "The authentification is secure !");
+	}
 
-    /**
-     * @param representation
-     * @throws ControllerException
-     */
-    protected void throwIfNull( Representation representation ) throws ControllerException {
-        if ( representation == null ) {
-            throw new ControllerException( "Representation is null" );
-        }
-    }
+	/**
+	 * throw an exception if the representation is null
+	 * @param representation
+	 * @throws ControllerException
+	 */
+	protected void throwIfNull(Representation representation) throws ControllerException {
+		if (representation == null) {
+			throw new ControllerException("Representation is null");
+		}
+	}
 
-    /**
-     * @param requestEntity
-     * @return
-     */
-    public Representation getRepresentation( String requestEntity ) {
-        return defaultRepresentation.createNewRepresentation( getRequestEntity( requestEntity ) );
-    }
+	/**
+	 * create a representation from the content of request's entity 
+	 * @param requestEntity
+	 * @return
+	 */
+	public Representation getRepresentation(String requestEntity) {
+		return defaultRepresentation.createNewRepresentation(getRequestEntity(requestEntity));
+	}
 
-    /**
-     * @param requestEntity
-     * @param keys
-     * @return
-     */
-    public boolean validate( String requestEntity, String... keys ) {
-        Representation representation = getRepresentation( requestEntity );
-        throwIfNull( representation );
-        return representation.has( keys );
-    }
+	/**
+	 * check if the content of request's entity contains specific keys
+	 * @param requestEntity
+	 * @param keys
+	 * @return
+	 */
+	public boolean validate(String requestEntity, String... keys) {
+		Representation representation = getRepresentation(requestEntity);
+		throwIfNull(representation);
+		return representation.has(keys);
+	}
 
-    /**
-     * @param requestEntity
-     * @param keys
-     * @return
-     */
-    public Response validateResponse( String requestEntity, String... keys ) {
-        if ( !validate( requestEntity, keys ) ) {
-            return response.status( 406 ).entity( "Json representation is not valid !" ).build();
-        } else
-            return response.status( 200 ).entity( requestEntity ).build();
-    }
+	/**
+	 * update the response if the content of request's entity contains specific keys
+	 * @param requestEntity
+	 * @param keys
+	 * @return
+	 */
+	public Response validateResponse(String requestEntity, String... keys) {
+		if (!validate(requestEntity, keys)) {
+			return ok(406, "Json representation is not valid !");
+		} else
+			return ok(200, requestEntity);
+	}
 
-    /**
-     * @param requestEntity
-     * @return
-     */
-    public String getRequestEntity( String requestEntity ) {
-        return requestEntity;
-    }
+	/**
+	 * retrieve the entity of the http request
+	 * @param requestEntity
+	 * @return
+	 */
+	public String getRequestEntity(String requestEntity) {
+		return requestEntity;
+	}
 
-    /**
-     * @return
-     */
-    public List<String> getUserAgent() {
-        return getHeaders().get( "user-agent" );
-    }
+	/**
+	 * retrieve the user-agent of the request's header
+	 * @return
+	 */
+	public String getUserAgent() {
+		
+		List<String> userAgent = getHeaders().get("user-agent");
+		if (userAgent != null) {
+			return userAgent.get(0);
+		}else {
+			throw new NullPointerException();
+		}
+		//return getHeaders().get("user-agent");
+	}
 
-    /**
-     * @return
-     */
-    public boolean isChrome() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "CHROME" );
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isChrome() {
+		return getUserAgent().toUpperCase().contains("CHROME");
+	}
 
-    /**
-     * @return
-     */
-    public boolean isFirefox() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "FIREFOX" );
-    }
+	/**
+	 * @return
+	 */
+	public boolean isFirefox() {
+		return getUserAgent().toUpperCase().contains("FIREFOX");
+	}
 
-    /**
-     * @return
-     */
-    public boolean isTablet() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "TABLET" )
-                || getUserAgent().get( 0 ).toUpperCase().contains( "IPAD" );
-    }
+	/**
+	 * @return
+	 */
+	public boolean isTablet() {
+		return getUserAgent().toUpperCase().contains("TABLET")
+				|| getUserAgent().toUpperCase().contains("IPAD");
+	}
 
-    /**
-     * @return
-     */
-    public boolean isMobile() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "MOBILE" );
-    }
+	/**
+	 * @return
+	 */
+	public boolean isMobile() {
+		return getUserAgent().toUpperCase().contains("MOBILE");
+	}
+	
+	
+	/**
+	 * update the response with a status and an entity 
+	 * @param status
+	 * @param entity
+	 * @return
+	 */
+	public Response ok(int status, Object entity){
+		return Response.status(status).entity(entity).build();
+	}
 }

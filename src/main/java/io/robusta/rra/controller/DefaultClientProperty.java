@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultClientProperty {
 
     /**
+     * retrieve the user-agent of the request
      * @param request
      * @return
      */
@@ -40,6 +41,7 @@ public class DefaultClientProperty {
     }
 
     /**
+     * check if client's browser is Chrome
      * @param request
      * @return
      */
@@ -48,6 +50,7 @@ public class DefaultClientProperty {
     }
 
     /**
+     * check if client's browser is Firefox
      * @param request
      * @return
      */
@@ -56,6 +59,7 @@ public class DefaultClientProperty {
     }
 
     /**
+     * check if client's device is Tablet or Ipad
      * @param request
      * @return
      */
@@ -65,6 +69,7 @@ public class DefaultClientProperty {
     }
 
     /**
+     * check if client's device is Mobile
      * @param request
      * @return
      */

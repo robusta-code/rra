@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface Controller {
 
     /**
+     * retrieve the entity of the httpServletRequest and check if it contains specified keys
      * @param req
      * @param resp
      * @param keys
@@ -45,9 +46,10 @@ public interface Controller {
     public boolean validate( HttpServletRequest req, HttpServletResponse resp, String... keys ) throws IOException;
 
     /**
+     * retrieve the username and the password from the entity of the httpServletRequest
      * @param req
      * @param resp
-     * @return
+     * @return user password
      */
     public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp );
 

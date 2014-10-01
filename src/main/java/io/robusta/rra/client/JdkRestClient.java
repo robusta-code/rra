@@ -205,6 +205,7 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
     }
 
     /**
+     * get the header fields from the request and store it into a map
      * @param http
      * @return
      */

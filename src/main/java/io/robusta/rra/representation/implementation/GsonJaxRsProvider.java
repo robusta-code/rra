@@ -23,7 +23,6 @@
 
 package io.robusta.rra.representation.implementation;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +47,6 @@ import javax.ws.rs.ext.Provider;
 @Consumes("application/json")
 @Produces("application/json")
 public class GsonJaxRsProvider implements MessageBodyReader<GsonRepresentation>, MessageBodyWriter<GsonRepresentation> {
-
-	private ObjectOutputStream oos;
 
 	@Override
 	public boolean isReadable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
@@ -86,15 +83,5 @@ public class GsonJaxRsProvider implements MessageBodyReader<GsonRepresentation>,
 
 		oos.flush();
 		oos.close();
-	}
-
-	public void closeStream() {
-		try {
-			oos.flush();
-			oos.close();
-			System.out.println("Steam has been closed successfully !");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
 	}
 }

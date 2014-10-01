@@ -50,6 +50,9 @@ public interface Callback {
     public void onSuccess( String response );
 
     /**
+     * Datas are sent, validated by the server, and safely received, with a 200
+     * - 300
+     *
      * @param inputStream
      */
     public void onSuccess( InputStream inputStream );
@@ -68,12 +71,13 @@ public interface Callback {
 
     // TODO : httpException not compatible with Gwt ?
     /**
+     * handle exception that occurred during the callback
      * @param exception
      */
     public void onException( Exception exception );
 
     /**
-     * 
+     * called when the callback is finished
      */
     public void onComplete();
 

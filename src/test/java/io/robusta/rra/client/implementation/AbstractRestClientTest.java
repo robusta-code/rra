@@ -82,6 +82,7 @@ public class AbstractRestClientTest {
         for ( AbstractRestClient client : clients ) {
             String[] expected = new String[] { "http://localhost:8080/classify/test/user?id=12&username=john+doe", "" };
             String[] actual = client.prepareMethod( HttpMethod.GET, relativePath, cl, null );
+            System.out.println("actual " + actual);
             assertEquals( expected[0], actual[0] );
             assertEquals( expected[1], actual[1] );
             assertTrue( Arrays.asList( actual ).toString(), Arrays.equals( actual, expected ) );

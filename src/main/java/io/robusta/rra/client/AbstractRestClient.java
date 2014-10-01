@@ -75,6 +75,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     protected String              contentType        = RestClient.jsonContentType;
 
     /**
+     * set the default content type of the request
      * @param contentType
      */
     public static void setDefaultContentType( String contentType ) {
@@ -151,6 +152,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     }
 
     /**
+     * check if the content type is a form 
      * @return
      */
     protected boolean contentTypeIsForm() {
@@ -219,7 +221,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     }
 
     /**
-     * 
+     * reset the request 
      */
     public void clean() {
         setNextEntity( "" );
@@ -236,10 +238,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     public abstract String encodeParameter( String nameOrValue );
 
     /**
-     * @param applicationUri
-     * @param relativePath
-     * @param parameters
-     * @return
+     * build url http compliant
+     * @param applicationUri is the base Uri of the application
+     * @param relativePath is the relative path of the request
+     * @param parameters are the parameters of the request
+     * @return the encode url
      */
     protected String encodeUrl( String applicationUri, String relativePath, CoupleList<String, Object> parameters ) {
         String url = StringUtils.addPath( applicationUri, relativePath );
@@ -267,8 +270,9 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     }
 
     /**
+     * build the form entity 
      * @param parameters
-     * @return
+     * @return the encoded form entity
      */
     protected String encodeFormEntity( CoupleList<String, Object> parameters ) {
         StringBuilder result = new StringBuilder();
@@ -477,10 +481,12 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     public abstract void join();
 
     /**
+     *  This method has the responsability do make the correct call with a
+     * specific implementation for an asynchronous call
      * @param method
      * @param url
      * @param entity
-     * @param callback
+     * @param callback for an asynchronous call
      * @throws HttpException
      */
     protected abstract void executeMethod( final HttpMethod method, final String url, final String entity,
@@ -493,19 +499,14 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * @param inputStream
      * @param callback
      */
-    // protected void callCallback(Callback callback, int httpCode, String
-    // response) {
     protected void callCallback( Callback callback, int httpCode, InputStream inputStream ) {
 
         if ( httpCode >= 200 && httpCode < 300 ) {
-            // callback.onSuccess(response);
-
             callback.onSuccess( inputStream );
         } else if ( httpCode >= 300 && httpCode < 400 ) {
             // no success
         } else if ( httpCode >= 400 && httpCode < 600 ) {
         } else if ( httpCode < 600 ) {
-            // callback.onFailure(new RestException(httpCode, response));
             callback.onFailure( new RestException( httpCode, inputStream ) );
         }
     }

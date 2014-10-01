@@ -34,111 +34,118 @@ import java.io.InputStream;
  */
 public class SimpleCallback implements Callback {
 
-    /**
+	/**
      * 
      */
-    public static boolean debug = true;
+	public static boolean debug = true;
 
-    /**
+	/**
      * 
      */
-    RestClient            client;
+	RestClient client;
 
-    /**
-     * @param client
-     */
-    public SimpleCallback( RestClient client ) {
-        this.client = client;
-    }
+	/**
+	 * Constructor
+	 * 
+	 * @param client
+	 */
+	public SimpleCallback(RestClient client) {
+		this.client = client;
+	}
 
-    /**
-     * This implementation doesn't do anything. Overwrite it to extend
-     * functionnalities.
-     * 
-     * @param response
-     */
-    @Override
-    public void onSuccess( String response ) {
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Successful request" );
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#onSuccess(java.lang.String)
+	 */
+	@Override
+	public void onSuccess(String response) {
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Successful request");
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.robusta.rra.client.Callback#onSuccess(java.io.InputStream)
-     */
-    @Override
-    public void onSuccess( InputStream inputStream ) {
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Successful request" );
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#onSuccess(java.io.InputStream)
+	 */
+	@Override
+	public void onSuccess(InputStream inputStream) {
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Successful request");
+		}
+	}
 
-    /**
-     * @param response
-     */
-    public void onSuccess( Representation response ) {
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Successful request" );
-        }
-    }
+	/**
+	 * Datas are sent, validated by the server, and safely received, with a 200
+	 * - 300
+	 *
+	 * @param representation
+	 */
+	public void onSuccess(Representation representation) {
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Successful request");
+		}
+	}
 
-    /**
-     * @param clazz
-     * @param response
-     */
-    public <T> void onSuccess( Class<T> clazz, T response ) {
+	/**
+	 * Datas are sent, validated by the server, and safely received, with a 200
+	 * - 300
+	 *
+	 * @param clazz
+	 * @param response
+	 */
+	public <T> void onSuccess(Class<T> clazz, T response) {
 
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Successful request" );
-        }
-    }
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Successful request");
+		}
+	}
 
-    /**
-     * This implementation doesn't do anything. Overwrite it to extend
-     * functionnalities.
-     * 
-     * @param failure
-     */
-    @Override
-    public void onFailure( RestException failure ) {
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Request failed :" + failure );
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#onFailure(io.robusta.rra.exception.
+	 * RestException)
+	 */
+	@Override
+	public void onFailure(RestException failure) {
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Request failed :" + failure);
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.robusta.rra.client.Callback#onComplete()
-     */
-    @Override
-    public void onComplete() {
-        if ( debug ) {
-            System.out.println( "Debug SimpleCallback : Request complete" );
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#onComplete()
+	 */
+	@Override
+	public void onComplete() {
+		if (debug) {
+			System.out.println("Debug SimpleCallback : Request complete");
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.robusta.rra.client.Callback#getClient()
-     */
-    @Override
-    public RestClient getClient() {
-        return this.client;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#getClient()
+	 */
+	@Override
+	public RestClient getClient() {
+		return this.client;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.robusta.rra.client.Callback#onException(java.lang.Exception)
-     */
-    @Override
-    public void onException( Exception exception ) {
-        throw new RuntimeException( exception );
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.client.Callback#onException(java.lang.Exception)
+	 */
+	@Override
+	public void onException(Exception exception) {
+		throw new RuntimeException(exception);
+	}
 
 }

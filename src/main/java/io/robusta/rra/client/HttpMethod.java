@@ -45,6 +45,7 @@ public enum HttpMethod {
     }
 
     /**
+     * getter of the method attribute
      * @return
      */
     public String getMethod() {
