@@ -113,6 +113,9 @@ public class JdkRestClient extends AbstractRestClient<HttpURLConnection> {
             }
             this.response = FileUtils.readInputStream( http.getInputStream() );
             this.responseHeaders = readHeaders( http );
+            for ( String key : this.responseHeaders.keySet() ) {
+                System.out.println( "key " + key + " -> " + this.responseHeaders.get( key ) );
+            }
             this.httpCode = http.getResponseCode();
 
             return this.response;

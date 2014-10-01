@@ -501,6 +501,8 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
             // callback.onSuccess(response);
 
             callback.onSuccess( inputStream );
+            callback.onComplete();
+            
         } else if ( httpCode >= 300 && httpCode < 400 ) {
             // no success
         } else if ( httpCode >= 400 && httpCode < 600 ) {

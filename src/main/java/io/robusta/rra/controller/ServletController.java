@@ -45,7 +45,7 @@ public class ServletController extends HttpServlet implements Controller {
     /**
      * 
      */
-    protected DefaultClientProperty clientProperty;
+    protected ClientProperty clientProperty;
 
     /*
      * (non-Javadoc)
@@ -55,7 +55,7 @@ public class ServletController extends HttpServlet implements Controller {
     @Override
     public void init() throws ServletException {
         super.init();
-        clientProperty = new DefaultClientProperty();
+        clientProperty = new ClientPropertyServlet();
     }
 
     /*
@@ -160,14 +160,14 @@ public class ServletController extends HttpServlet implements Controller {
     /**
      * @return
      */
-    public DefaultClientProperty getClientProperty() {
+    public ClientProperty getClientProperty() {
         return clientProperty;
     }
 
     /**
      * @param clientProperty
      */
-    public void setClientProperty( DefaultClientProperty clientProperty ) {
+    public void setClientProperty( ClientProperty clientProperty ) {
         this.clientProperty = clientProperty;
     }
 

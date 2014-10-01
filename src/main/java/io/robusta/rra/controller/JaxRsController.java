@@ -24,6 +24,11 @@ public class JaxRsController {
     /**
      * 
      */
+    protected ClientProperty     clientProperty;
+
+    /**
+     * 
+     */
     @Context
     HttpHeaders                  httpHeader;
     /**
@@ -41,6 +46,11 @@ public class JaxRsController {
      */
     @Context
     Request                      request;
+
+    public JaxRsController() {
+        super();
+        clientProperty = new ClientPropertyJaxRs();
+    }
 
     /**
      * @return
@@ -168,32 +178,11 @@ public class JaxRsController {
         return getHeaders().get( "user-agent" );
     }
 
-    /**
-     * @return
-     */
-    public boolean isChrome() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "CHROME" );
+    public ClientProperty getClientProperty() {
+        return clientProperty;
     }
 
-    /**
-     * @return
-     */
-    public boolean isFirefox() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "FIREFOX" );
-    }
-
-    /**
-     * @return
-     */
-    public boolean isTablet() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "TABLET" )
-                || getUserAgent().get( 0 ).toUpperCase().contains( "IPAD" );
-    }
-
-    /**
-     * @return
-     */
-    public boolean isMobile() {
-        return getUserAgent().get( 0 ).toUpperCase().contains( "MOBILE" );
+    public void setClientProperty( ClientProperty clientProperty ) {
+        this.clientProperty = clientProperty;
     }
 }

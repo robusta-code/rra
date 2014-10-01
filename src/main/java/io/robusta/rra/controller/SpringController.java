@@ -50,14 +50,14 @@ public class SpringController implements io.robusta.rra.controller.Controller {
     /**
      * 
      */
-    protected DefaultClientProperty clientProperty;
+    protected ClientProperty clientProperty;
 
     /**
      * 
      */
     @PostConstruct
     public void init() {
-        clientProperty = new DefaultClientProperty();
+        clientProperty = new ClientPropertyServlet();
     }
 
     /**
@@ -162,14 +162,14 @@ public class SpringController implements io.robusta.rra.controller.Controller {
     /**
      * @return
      */
-    public DefaultClientProperty getClientProperty() {
+    public ClientProperty getClientProperty() {
         return clientProperty;
     }
 
     /**
      * @param clientProperty
      */
-    public void setClientProperty( DefaultClientProperty clientProperty ) {
+    public void setClientProperty( ClientProperty clientProperty ) {
         this.clientProperty = clientProperty;
     }
 

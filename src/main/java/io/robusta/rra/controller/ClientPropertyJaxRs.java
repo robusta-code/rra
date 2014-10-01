@@ -23,53 +23,61 @@
 
 package io.robusta.rra.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import io.robusta.rra.exception.HttpException;
+
+import javax.ws.rs.core.HttpHeaders;
 
 /**
  * @author Nicolas Zozol
  *
  */
-public class DefaultClientProperty {
+public class ClientPropertyJaxRs implements ClientProperty<HttpHeaders> {
 
     /**
      * @param request
      * @return
      */
-    private String getAgent( HttpServletRequest request ) {
-        return request.getHeader( "user-agent" );
+    protected String getAgent( HttpHeaders httpHeaders ) {
+        if ( httpHeaders.getRequestHeader( "user-agent" ) != null ) {
+            return httpHeaders.getRequestHeader( "user-agent" ).get( 0 );
+
+        } else {
+            throw new HttpException( "user-agent is null !" );
+        }
     }
 
     /**
      * @param request
      * @return
      */
-    public boolean isChrome( HttpServletRequest request ) {
-        return ( getAgent( request ).toUpperCase().contains( "CHROME" ) );
+    public boolean isChrome( HttpHeaders httpHeaders ) {
+        return ( getAgent( httpHeaders ).toUpperCase().contains( "CHROME" ) );
     }
 
     /**
      * @param request
      * @return
      */
-    public boolean isFirefox( HttpServletRequest request ) {
-        return ( getAgent( request ).toUpperCase().contains( "FIREFOX" ) );
+    public boolean isFirefox( HttpHeaders httpHeaders ) {
+        return ( getAgent( httpHeaders ).toUpperCase().contains( "FIREFOX" ) );
     }
 
     /**
      * @param request
      * @return
      */
-    public boolean isTablet( HttpServletRequest request ) {
-        return ( getAgent( request ).toUpperCase().contains( "TABLET" ) || getAgent( request ).toUpperCase().contains(
-                "IPAD" ) );
+    public boolean isTablet( HttpHeaders httpHeaders ) {
+        return ( getAgent( httpHeaders ).toUpperCase().contains( "TABLET" ) || getAgent( httpHeaders ).toUpperCase()
+                .contains(
+                        "IPAD" ) );
     }
 
     /**
      * @param request
      * @return
      */
-    public boolean isMobile( HttpServletRequest request ) {
-        return ( getAgent( request ).toUpperCase().contains( "MOBILE" ) );
+    public boolean isMobile( HttpHeaders httpHeaders ) {
+        return ( getAgent( httpHeaders ).toUpperCase().contains( "MOBILE" ) );
     }
 
 }
