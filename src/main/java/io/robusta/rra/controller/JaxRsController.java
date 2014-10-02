@@ -28,6 +28,11 @@ public class JaxRsController {
 	/**
      * 
      */
+	protected ClientProperty clientProperty;
+
+	/**
+     * 
+     */
 	@Context
 	HttpHeaders httpHeader;
 	/**
@@ -46,8 +51,14 @@ public class JaxRsController {
 	@Context
 	Request request;
 
+	public JaxRsController() {
+		super();
+		clientProperty = new ClientPropertyJaxRs();
+	}
+
 	/**
 	 * retrieve the header of the request
+	 * 
 	 * @return
 	 */
 	public HttpHeaders getHttpHeader() {
@@ -56,6 +67,7 @@ public class JaxRsController {
 
 	/**
 	 * retrieve the uri info of the request
+	 * 
 	 * @return
 	 */
 	public UriInfo getUriInfo() {
@@ -64,6 +76,7 @@ public class JaxRsController {
 
 	/**
 	 * retrieve the header fields of the http request
+	 * 
 	 * @return
 	 */
 	public MultivaluedMap<String, String> getHeaders() {
@@ -72,6 +85,7 @@ public class JaxRsController {
 
 	/**
 	 * check if the content-type of the header is a "application/json"
+	 * 
 	 * @return
 	 */
 	public boolean isJsonApplication() {
@@ -80,7 +94,8 @@ public class JaxRsController {
 	}
 
 	/**
-	 *check if the uri is secure 
+	 * check if the uri is secure
+	 * 
 	 * @param uriInfo
 	 * @return
 	 */
@@ -90,6 +105,7 @@ public class JaxRsController {
 
 	/**
 	 * return the username and the password of the header's authorization
+	 * 
 	 * @return
 	 */
 	public String[] getBasicAuthentification() {
@@ -110,17 +126,20 @@ public class JaxRsController {
 
 	/**
 	 * check if the uri is secure and update the response
+	 * 
 	 * @return
 	 */
 	public Response getBasicAuthentificationResponse() {
 		if (!isSecure(getUriInfo())) {
-			return ok(426, "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
+			return ok(426,
+					"<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
 		} else
 			return ok(200, "The authentification is secure !");
 	}
 
 	/**
 	 * throw an exception if the representation is null
+	 * 
 	 * @param representation
 	 * @throws ControllerException
 	 */
@@ -131,7 +150,8 @@ public class JaxRsController {
 	}
 
 	/**
-	 * create a representation from the content of request's entity 
+	 * create a representation from the content of request's entity
+	 * 
 	 * @param requestEntity
 	 * @return
 	 */
@@ -141,6 +161,7 @@ public class JaxRsController {
 
 	/**
 	 * check if the content of request's entity contains specific keys
+	 * 
 	 * @param requestEntity
 	 * @param keys
 	 * @return
@@ -152,7 +173,9 @@ public class JaxRsController {
 	}
 
 	/**
-	 * update the response if the content of request's entity contains specific keys
+	 * update the response if the content of request's entity contains specific
+	 * keys
+	 * 
 	 * @param requestEntity
 	 * @param keys
 	 * @return
@@ -166,6 +189,7 @@ public class JaxRsController {
 
 	/**
 	 * retrieve the entity of the http request
+	 * 
 	 * @param requestEntity
 	 * @return
 	 */
@@ -175,57 +199,45 @@ public class JaxRsController {
 
 	/**
 	 * retrieve the user-agent of the request's header
-	 * @return
-	 */
-	public String getUserAgent() {
-		
-		List<String> userAgent = getHeaders().get("user-agent");
-		if (userAgent != null) {
-			return userAgent.get(0);
-		}else {
-			throw new NullPointerException();
-		}
-		//return getHeaders().get("user-agent");
-	}
-
-	/**
 	 * 
 	 * @return
 	 */
-	public boolean isChrome() {
-		return getUserAgent().toUpperCase().contains("CHROME");
+	public String getUserAgent() {
+
+		List<String> userAgent = getHeaders().get("user-agent");
+		if (userAgent != null) {
+			return userAgent.get(0);
+		} else {
+			throw new NullPointerException();
+		}
+		// return getHeaders().get("user-agent");
 	}
 
 	/**
-	 * @return
-	 */
-	public boolean isFirefox() {
-		return getUserAgent().toUpperCase().contains("FIREFOX");
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isTablet() {
-		return getUserAgent().toUpperCase().contains("TABLET")
-				|| getUserAgent().toUpperCase().contains("IPAD");
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isMobile() {
-		return getUserAgent().toUpperCase().contains("MOBILE");
-	}
-	
-	
-	/**
-	 * update the response with a status and an entity 
+	 * update the response with a status and an entity
+	 * 
 	 * @param status
 	 * @param entity
 	 * @return
 	 */
-	public Response ok(int status, Object entity){
+	public Response ok(int status, Object entity) {
 		return Response.status(status).entity(entity).build();
+	}
+
+	
+	/**
+	 * retrieve the client property
+	 * @return
+	 */
+	public ClientProperty getClientProperty() {
+		return clientProperty;
+	}
+
+	/**
+	 * update the client property
+	 * @param clientProperty
+	 */
+	public void setClientProperty(ClientProperty clientProperty) {
+		this.clientProperty = clientProperty;
 	}
 }

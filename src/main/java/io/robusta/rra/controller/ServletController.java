@@ -45,7 +45,7 @@ public class ServletController extends HttpServlet implements Controller {
 	/**
      * 
      */
-	protected DefaultClientProperty clientProperty;
+	protected ClientProperty clientProperty;
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public class ServletController extends HttpServlet implements Controller {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		clientProperty = new DefaultClientProperty();
+		clientProperty = new ClientPropertyServlet();
 	}
 
 	/*
@@ -95,6 +95,7 @@ public class ServletController extends HttpServlet implements Controller {
 
 	/**
 	 * throw an exception if the representation is null
+	 * 
 	 * @param representation
 	 * @throws ControllerException
 	 */
@@ -161,18 +162,20 @@ public class ServletController extends HttpServlet implements Controller {
 	}
 
 	/**
-	 * retrieve the default client property
+	 * retrieve the client property
+	 * 
 	 * @return
 	 */
-	public DefaultClientProperty getClientProperty() {
+	public ClientProperty getClientProperty() {
 		return clientProperty;
 	}
 
 	/**
-	 * update  the default client property
+	 * update the client property
+	 * 
 	 * @param clientProperty
 	 */
-	public void setClientProperty(DefaultClientProperty clientProperty) {
+	public void setClientProperty(ClientProperty clientProperty) {
 		this.clientProperty = clientProperty;
 	}
 

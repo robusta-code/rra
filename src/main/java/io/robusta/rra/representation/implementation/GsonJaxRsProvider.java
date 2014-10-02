@@ -48,11 +48,17 @@ import javax.ws.rs.ext.Provider;
 @Produces("application/json")
 public class GsonJaxRsProvider implements MessageBodyReader<GsonRepresentation>, MessageBodyWriter<GsonRepresentation> {
 
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.ext.MessageBodyReader#isReadable(java.lang.Class, java.lang.reflect.Type, java.lang.annotation.Annotation[], javax.ws.rs.core.MediaType)
+	 */
 	@Override
 	public boolean isReadable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
 		return aClass == GsonRepresentation.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.ext.MessageBodyReader#readFrom(java.lang.Class, java.lang.reflect.Type, java.lang.annotation.Annotation[], javax.ws.rs.core.MediaType, javax.ws.rs.core.MultivaluedMap, java.io.InputStream)
+	 */
 	@Override
 	public GsonRepresentation readFrom(Class<GsonRepresentation> gsonRepresentationClass, Type type,
 			Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> stringStringMultivaluedMap,
@@ -60,17 +66,26 @@ public class GsonJaxRsProvider implements MessageBodyReader<GsonRepresentation>,
 		return new GsonRepresentation(inputStream);
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.ext.MessageBodyWriter#isWriteable(java.lang.Class, java.lang.reflect.Type, java.lang.annotation.Annotation[], javax.ws.rs.core.MediaType)
+	 */
 	@Override
 	public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
 		return type == GsonRepresentation.class;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.ext.MessageBodyWriter#getSize(java.lang.Object, java.lang.Class, java.lang.reflect.Type, java.lang.annotation.Annotation[], javax.ws.rs.core.MediaType)
+	 */
 	@Override
 	public long getSize(GsonRepresentation representation, Class<?> aClass, Type type, Annotation[] annotations,
 			MediaType mediaType) {
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.ws.rs.ext.MessageBodyWriter#writeTo(java.lang.Object, java.lang.Class, java.lang.reflect.Type, java.lang.annotation.Annotation[], javax.ws.rs.core.MediaType, javax.ws.rs.core.MultivaluedMap, java.io.OutputStream)
+	 */
 	@Override
 	public void writeTo(GsonRepresentation representation, Class<?> aClass, Type type, Annotation[] annotations,
 			MediaType mediaType, MultivaluedMap<String, Object> stringObjectMultivaluedMap, OutputStream outputStream)

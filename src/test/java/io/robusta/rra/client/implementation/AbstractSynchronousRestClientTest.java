@@ -50,9 +50,9 @@ public class AbstractSynchronousRestClientTest {
 
     // @Test
     public void testPOST() {
-        expected = "{\"name\":\"name\"}\n";
+        expected = "{\"email\":\"email\",\"name\":\"name\"}\n";
         for ( AbstractRestClient client : clients ) {
-            actual = client.POST( "spring", new GsonRepresentation( "{\"email\":\"email\", \"name\":\"name\"}" ) );
+            actual = client.POST( "api/ad/test", new GsonRepresentation( "{\"email\":\"email\", \"name\":\"name\"}" ) );
             // System.out.println("client.getHttpCode()="+client.getHttpCode());
             assertEquals( expected, actual );
         }

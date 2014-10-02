@@ -102,41 +102,49 @@ public interface JsonRepresentation<Document> extends Representation<Document> {
     public <T> List<T> pluck( Class<T> type, String key ) throws RepresentationException;
 
     /**
+     * check if it's a primitive
      * @return
      */
     public boolean isPrimitive();
 
     /**
+     * check if it's an object
      * @return
      */
     public boolean isObject();
 
     /**
+     * check if it's a boolean
      * @return
      */
     public boolean isBoolean();
 
     /**
+     * check if it's a string
      * @return
      */
     public boolean isString();
 
     /**
+     * check if it's a number
      * @return
      */
     public boolean isNumber();
 
     /**
+     * check if it's an array
      * @return
      */
     public boolean isArray();
 
     /**
+     * check if it's null
      * @return
      */
     public boolean isNull();
 
     /**
+     * return the type of the object
      * @return
      */
     public JsonType getTypeof();

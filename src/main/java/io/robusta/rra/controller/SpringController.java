@@ -47,130 +47,140 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Controller
 public class SpringController implements io.robusta.rra.controller.Controller {
 
-    /**
+	/**
      * 
      */
-    protected DefaultClientProperty clientProperty;
+	protected ClientProperty clientProperty;
 
-    /**
+	/**
      * 
      */
-    @PostConstruct
-    public void init() {
-        clientProperty = new DefaultClientProperty();
-    }
+	@PostConstruct
+	public void init() {
+		clientProperty = new ClientPropertyServlet();
+	}
 
-    /**
-     * @param request
-     * @return
-     * @throws IOException
-     */
-    @ModelAttribute( "representation" )
-    String representation( HttpServletRequest request ) throws IOException {
-        String contentType = request.getContentType();
+	/**
+	 * set the entity to a request attribut
+	 * 
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@ModelAttribute("representation")
+	String representation(HttpServletRequest request) throws IOException {
+		String contentType = request.getContentType();
 
-        if ( contentType != null && contentType.contains( "application/json" ) ) {
-            InputStream in = request.getInputStream();
-            StringBuffer stringBuffer = new StringBuffer();
-            int d;
-            while ( ( d = in.read() ) != -1 ) {
-                stringBuffer.append( (char) d );
-            }
-            System.out.println( stringBuffer.toString() );
-            System.out.println( Rra.defaultRepresentation instanceof GsonRepresentation );
-            request.setAttribute( "representation", stringBuffer.toString() );
-        }
-        return "representation";
-    }
+		if (contentType != null && contentType.contains("application/json")) {
+			InputStream in = request.getInputStream();
+			StringBuffer stringBuffer = new StringBuffer();
+			int d;
+			while ((d = in.read()) != -1) {
+				stringBuffer.append((char) d);
+			}
+			System.out.println(stringBuffer.toString());
+			System.out.println(Rra.defaultRepresentation instanceof GsonRepresentation);
+			request.setAttribute("representation", stringBuffer.toString());
+		}
+		return "representation";
+	}
 
-    /**
-     * @param req
-     * @return
-     */
-    public Representation getRepresentation( HttpServletRequest req ) {
-        return Rra.defaultRepresentation.createNewRepresentation( req.getAttribute( "representation" ).toString() );
-    }
+	/**
+	 * create a representation from the content of request's entity
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public Representation getRepresentation(HttpServletRequest req) {
+		return Rra.defaultRepresentation.createNewRepresentation(req.getAttribute("representation").toString());
+	}
 
-    /**
-     * @param representation
-     * @throws ControllerException
-     */
-    protected void throwIfNull( Representation representation ) throws ControllerException {
-        if ( representation == null ) {
-            throw new ControllerException( "Representation is null" );
-        }
-    }
+	/**
+	 * throw an exception if the representation is null
+	 * 
+	 * @param representation
+	 * @throws ControllerException
+	 */
+	protected void throwIfNull(Representation representation) throws ControllerException {
+		if (representation == null) {
+			throw new ControllerException("Representation is null");
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see io.robusta.rra.controller.Controller#validate(javax.servlet.http.
-     * HttpServletRequest, javax.servlet.http.HttpServletResponse,
-     * java.lang.String[])
-     */
-    @Override
-    public boolean validate( HttpServletRequest request, HttpServletResponse response, String... keys ) {
-        Representation representation = getRepresentation( request );
-        throwIfNull( representation );
-        boolean valid = representation.has( keys );
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.robusta.rra.controller.Controller#validate(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse,
+	 * java.lang.String[])
+	 */
+	@Override
+	public boolean validate(HttpServletRequest request, HttpServletResponse response, String... keys) {
+		Representation representation = getRepresentation(request);
+		throwIfNull(representation);
+		boolean valid = representation.has(keys);
 
-        if ( !valid ) {
-            try {
-                response.sendError( 406,
-                        "Json not valid ! it hasn't at least one of these keys: " + java.util.Arrays.toString( keys ) );
-            } catch ( IOException e ) {
-                e.printStackTrace();
-            }
-        }
-        return valid;
-    }
+		if (!valid) {
+			try {
+				response.sendError(406,
+						"Json not valid ! it hasn't at least one of these keys: " + java.util.Arrays.toString(keys));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return valid;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * io.robusta.rra.controller.Controller#getBasicAuthentication(javax.servlet
-     * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public String[] getBasicAuthentication( HttpServletRequest req, HttpServletResponse resp ) {
-        String authorization = req.getHeader( "Authorization" );
-        String[] values = new String[2];
-        if ( authorization != null && authorization.startsWith( "Basic" ) ) {
-            if ( req.isSecure() ) {
-                String base64Credentials = authorization.substring( "Basic".length() ).trim();
-                CodecImpl codecimpl = new CodecImpl();
-                try {
-                    values[0] = codecimpl.getUsername( base64Credentials );
-                    values[1] = codecimpl.getPassword( base64Credentials );
-                } catch ( CodecException e ) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    resp.getWriter()
-                            .println(
-                                    "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>" );
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return values;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.robusta.rra.controller.Controller#getBasicAuthentication(javax.servlet
+	 * .http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public String[] getBasicAuthentication(HttpServletRequest req, HttpServletResponse resp) {
+		String authorization = req.getHeader("Authorization");
+		String[] values = new String[2];
+		if (authorization != null && authorization.startsWith("Basic")) {
+			if (req.isSecure()) {
+				String base64Credentials = authorization.substring("Basic".length()).trim();
+				CodecImpl codecimpl = new CodecImpl();
+				try {
+					values[0] = codecimpl.getUsername(base64Credentials);
+					values[1] = codecimpl.getPassword(base64Credentials);
+				} catch (CodecException e) {
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					resp.getWriter()
+							.println(
+									"<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return values;
+	}
 
-    /**
-     * @return
-     */
-    public DefaultClientProperty getClientProperty() {
-        return clientProperty;
-    }
+	/**
+	 * retrieve the client property
+	 * 
+	 * @return
+	 */
+	public ClientProperty getClientProperty() {
+		return clientProperty;
+	}
 
-    /**
-     * @param clientProperty
-     */
-    public void setClientProperty( DefaultClientProperty clientProperty ) {
-        this.clientProperty = clientProperty;
-    }
+	/**
+	 * set the client property
+	 * 
+	 * @param clientProperty
+	 */
+	public void setClientProperty(ClientProperty clientProperty) {
+		this.clientProperty = clientProperty;
+	}
 
 }
