@@ -50,7 +50,7 @@ public class SpringController implements io.robusta.rra.controller.Controller {
 	/**
      * 
      */
-	protected ClientProperty clientProperty;
+    protected ClientProperty clientProperty;
 
 	/**
      * 

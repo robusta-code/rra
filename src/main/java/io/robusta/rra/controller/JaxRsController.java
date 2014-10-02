@@ -202,15 +202,8 @@ public class JaxRsController {
 	 * 
 	 * @return
 	 */
-	public String getUserAgent() {
-
-		List<String> userAgent = getHeaders().get("user-agent");
-		if (userAgent != null) {
-			return userAgent.get(0);
-		} else {
-			throw new NullPointerException();
-		}
-		// return getHeaders().get("user-agent");
+	public List<String> getUserAgent() {
+		return getHeaders().get("user-agent");
 	}
 
 	/**
@@ -224,9 +217,9 @@ public class JaxRsController {
 		return Response.status(status).entity(entity).build();
 	}
 
-	
 	/**
 	 * retrieve the client property
+	 * 
 	 * @return
 	 */
 	public ClientProperty getClientProperty() {
@@ -235,9 +228,11 @@ public class JaxRsController {
 
 	/**
 	 * update the client property
+	 * 
 	 * @param clientProperty
 	 */
 	public void setClientProperty(ClientProperty clientProperty) {
 		this.clientProperty = clientProperty;
 	}
+
 }
