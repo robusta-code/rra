@@ -1,12 +1,15 @@
 package io.robusta.rra.controller;
 
+import io.robusta.rra.exception.HttpException;
 import io.robusta.rra.representation.Representation;
 import io.robusta.rra.representation.Rra;
 import io.robusta.rra.security.implementation.CodecException;
 import io.robusta.rra.security.implementation.CodecImpl;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
@@ -23,216 +26,174 @@ import javax.ws.rs.core.UriInfo;
  */
 public class JaxRsController {
 
-	public static Representation defaultRepresentation = Rra.defaultRepresentation;
+    public static Representation  defaultRepresentation = Rra.defaultRepresentation;
 
-	/**
+    /**
      * 
      */
-	protected ClientProperty clientProperty;
+    protected ClientProperty      clientProperty;
 
-	/**
+    /**
      * 
      */
-	@Context
-	HttpHeaders httpHeader;
-	/**
+    @Context
+    protected HttpHeaders         httpHeader;
+    /**
      * 
      */
-	@Context
-	UriInfo uriInfo;
-	/**
+    @Context
+    protected UriInfo             uriInfo;
+    /**
      * 
      */
-	@Context
-	Response response;
-	/**
+    @Context
+    protected HttpServletResponse httpServletResponse;
+
+    /**
      * 
      */
-	@Context
-	Request request;
+    @Context
+    protected Request             request;
 
-	public JaxRsController() {
-		super();
-		clientProperty = new ClientPropertyJaxRs();
-	}
+    public JaxRsController() {
+        super();
+        clientProperty = new ClientPropertyJaxRs();
+    }
 
-	/**
-	 * retrieve the header of the request
-	 * 
-	 * @return
-	 */
-	public HttpHeaders getHttpHeader() {
-		return httpHeader;
-	}
+    /**
+     * retrieve the header fields of the http request
+     * 
+     * @return
+     */
+    public MultivaluedMap<String, String> getHeaders() {
+        return httpHeader.getRequestHeaders();
+    }
 
-	/**
-	 * retrieve the uri info of the request
-	 * 
-	 * @return
-	 */
-	public UriInfo getUriInfo() {
-		return uriInfo;
-	}
+    /**
+     * check if the content-type of the header is a "application/json"
+     * 
+     * @return
+     */
+    public boolean isJsonApplication() {
+        List<String> type = getHeaders().get( "content-type" );
+        return ( type.get( 0 ) != null && type.get( 0 ).equals( "application/json" ) );
+    }
 
-	/**
-	 * retrieve the header fields of the http request
-	 * 
-	 * @return
-	 */
-	public MultivaluedMap<String, String> getHeaders() {
-		return getHttpHeader().getRequestHeaders();
-	}
+    /**
+     * check if the uri is secure
+     * 
+     * @param uriInfo
+     * @return
+     */
+    public boolean isSecure( UriInfo uriInfo ) {
+        return uriInfo.getAbsolutePath().toString().contains( "https" );
+    }
 
-	/**
-	 * check if the content-type of the header is a "application/json"
-	 * 
-	 * @return
-	 */
-	public boolean isJsonApplication() {
-		List<String> type = getHeaders().get("content-type");
-		return (type.get(0) != null && type.get(0).equals("application/json"));
-	}
+    /**
+     * return the username and the password of the header's authorization
+     * 
+     * @return
+     * @throws IOException
+     */
+    public String[] getBasicAuthentification() throws HttpException {
+        String[] values = new String[2];
+        if ( !isSecure( uriInfo ) ) {
+            try {
+                httpServletResponse
+                        .sendError( 426,
+                                "<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>" );
+                throw new HttpException( "connection is not secure !" );
+            } catch ( IOException e ) {
+            }
+        } else
+        {
 
-	/**
-	 * check if the uri is secure
-	 * 
-	 * @param uriInfo
-	 * @return
-	 */
-	public boolean isSecure(UriInfo uriInfo) {
-		return uriInfo.getAbsolutePath().toString().contains("https");
-	}
+            List<String> authorization = getHeaders().get( "authorization" );
+            if ( authorization.get( 0 ) != null && authorization.get( 0 ).startsWith( "Basic" ) ) {
+                String base64Credentials = authorization.get( 0 ).substring( "Basic".length() ).trim();
+                CodecImpl codecimpl = new CodecImpl();
+                try {
+                    values[0] = codecimpl.getUsername( base64Credentials );
+                    values[1] = codecimpl.getPassword( base64Credentials );
+                } catch ( CodecException e ) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return values;
+    }
 
-	/**
-	 * return the username and the password of the header's authorization
-	 * 
-	 * @return
-	 */
-	public String[] getBasicAuthentification() {
-		String[] values = new String[2];
-		List<String> authorization = getHeaders().get("authorization");
-		if (authorization.get(0) != null && authorization.get(0).startsWith("Basic")) {
-			String base64Credentials = authorization.get(0).substring("Basic".length()).trim();
-			CodecImpl codecimpl = new CodecImpl();
-			try {
-				values[0] = codecimpl.getUsername(base64Credentials);
-				values[1] = codecimpl.getPassword(base64Credentials);
-			} catch (CodecException e) {
-				e.printStackTrace();
-			}
-		}
-		return values;
-	}
+    /**
+     * throw an exception if the representation is null
+     * 
+     * @param representation
+     * @throws ControllerException
+     */
+    protected void throwIfNull( Representation representation ) throws ControllerException {
+        if ( representation == null ) {
+            throw new ControllerException( "Representation is null" );
+        }
+    }
 
-	/**
-	 * check if the uri is secure and update the response
-	 * 
-	 * @return
-	 */
-	public Response getBasicAuthentificationResponse() {
-		if (!isSecure(getUriInfo())) {
-			return ok(426,
-					"<a href='http://docs.oracle.com/javaee/5/tutorial/doc/bnbxw.html'>Establishing a Secure Connection Using SSL</a>");
-		} else
-			return ok(200, "The authentification is secure !");
-	}
+    /**
+     * create a representation from the content of request's entity
+     * 
+     * @param requestEntity
+     * @return
+     */
+    public Representation getRepresentation( String requestEntity ) {
+        return defaultRepresentation.createNewRepresentation( requestEntity );
+    }
 
-	/**
-	 * throw an exception if the representation is null
-	 * 
-	 * @param representation
-	 * @throws ControllerException
-	 */
-	protected void throwIfNull(Representation representation) throws ControllerException {
-		if (representation == null) {
-			throw new ControllerException("Representation is null");
-		}
-	}
+    /**
+     * check if the content of request's entity contains specific keys
+     * 
+     * @param requestEntity
+     * @param keys
+     * @return
+     */
+    public boolean validate( String requestEntity, String... keys ) {
+        Representation representation = getRepresentation( requestEntity );
+        throwIfNull( representation );
+        boolean valid = representation.has( keys );
+        if ( !valid ) {
+            try {
+                httpServletResponse
+                        .sendError( 406,
+                                "Json representation is not valid !" );
+            } catch ( IOException e ) {
+            }
+        }
+        return valid;
+    }
 
-	/**
-	 * create a representation from the content of request's entity
-	 * 
-	 * @param requestEntity
-	 * @return
-	 */
-	public Representation getRepresentation(String requestEntity) {
-		return defaultRepresentation.createNewRepresentation(getRequestEntity(requestEntity));
-	}
+    /**
+     * update the response with a status and an entity
+     * 
+     * @param status
+     * @param entity
+     * @return
+     */
+    public Response ok( int status, Object entity ) {
+        return Response.status( status ).entity( entity ).build();
+    }
 
-	/**
-	 * check if the content of request's entity contains specific keys
-	 * 
-	 * @param requestEntity
-	 * @param keys
-	 * @return
-	 */
-	public boolean validate(String requestEntity, String... keys) {
-		Representation representation = getRepresentation(requestEntity);
-		throwIfNull(representation);
-		return representation.has(keys);
-	}
+    /**
+     * retrieve the client property
+     * 
+     * @return
+     */
+    public ClientProperty getClientProperty() {
+        return clientProperty;
+    }
 
-	/**
-	 * update the response if the content of request's entity contains specific
-	 * keys
-	 * 
-	 * @param requestEntity
-	 * @param keys
-	 * @return
-	 */
-	public Response validateResponse(String requestEntity, String... keys) {
-		if (!validate(requestEntity, keys)) {
-			return ok(406, "Json representation is not valid !");
-		} else
-			return ok(200, requestEntity);
-	}
-
-	/**
-	 * retrieve the entity of the http request
-	 * 
-	 * @param requestEntity
-	 * @return
-	 */
-	public String getRequestEntity(String requestEntity) {
-		return requestEntity;
-	}
-
-	/**
-	 * retrieve the user-agent of the request's header
-	 * 
-	 * @return
-	 */
-	public List<String> getUserAgent() {
-		return getHeaders().get("user-agent");
-	}
-
-	/**
-	 * update the response with a status and an entity
-	 * 
-	 * @param status
-	 * @param entity
-	 * @return
-	 */
-	public Response ok(int status, Object entity) {
-		return Response.status(status).entity(entity).build();
-	}
-
-	/**
-	 * retrieve the client property
-	 * 
-	 * @return
-	 */
-	public ClientProperty getClientProperty() {
-		return clientProperty;
-	}
-
-	/**
-	 * update the client property
-	 * 
-	 * @param clientProperty
-	 */
-	public void setClientProperty(ClientProperty clientProperty) {
-		this.clientProperty = clientProperty;
-	}
+    /**
+     * update the client property
+     * 
+     * @param clientProperty
+     */
+    public void setClientProperty( ClientProperty clientProperty ) {
+        this.clientProperty = clientProperty;
+    }
 
 }
