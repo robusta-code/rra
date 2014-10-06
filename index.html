@@ -22,8 +22,8 @@
           <h2 id="project_tagline">Robusta Rest Adapter</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/robusta-code/rra/zipball/0.1">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/robusta-code/rra/tarball/0.1">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/robusta-code/rra/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/robusta-code/rra/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -80,37 +80,39 @@ Warning : This is Alpha state. Do not use in Production. Nevertheless, stable an
 
 <p>Let's say we have :</p>
 
-<pre><code>User johnDoe = new User(1L, "john.doe@robustaweb.com", "John", "Doe");
+<pre><code>User johnDoe = new User(1L, "john.doe@robusta.io", "John", "Doe");
 </code></pre>
 
 <p>where User implements the <code>Resource</code> interface.</p>
 
-<p><code>johnDoe.getRepresentation().toString()</code> will return :</p>
+<p>Creating new representation of User like:</p>
 
-<pre><code>  &lt;user&gt;
-    &lt;id&gt;1&lt;/id&gt;
-    &lt;email&gt;john.doe@robustaweb.com&lt;/email&gt;
-    &lt;firstname&gt;John&lt;/firstname&gt;
-    &lt;lastname&gt;Doe&lt;/lastname&gt;
-  &lt;/user&gt;
+<pre><code>Representation representation = new GsonRepresentation( johnDoe );
+</code></pre>
+
+<p><code>representation.toString()</code> will return :</p>
+
+<pre><code>{
+    "id": 1,
+    "email": "john.doe@robusta.io",
+    "firstname": "John",
+    "lastname": "Doe"
+}
 </code></pre>
 
 <p>This is often enough to get informations on the precious concept of User. But you still make easy changes with :</p>
 
-<pre><code>Representation representation = johnDoe.getRepresentation();
-representation.set("username", representation.get("email"));
+<pre><code>representation.remove( "email" );
 System.out.println( representation );
 </code></pre>
 
-<p>This adds the email as username in the Xml representation :</p>
+<p>This deletes the email in the Json representation :</p>
 
-<pre><code>  &lt;user&gt;
-    &lt;id&gt;1&lt;/id&gt;
-    &lt;email&gt;john.doe@robustaweb.com&lt;/email&gt;
-    &lt;firstname&gt;John&lt;/firstname&gt;
-    &lt;lastname&gt;Doe&lt;/lastname&gt;
-    &lt;username&gt;john.doe@robustaweb.com&lt;/username&gt;
-  &lt;/user&gt;
+<pre><code>{
+    "id": 1,
+    "firstname": "John",
+    "lastname": "Doe"
+}
 </code></pre>
       </section>
     </div>
