@@ -13,7 +13,7 @@ Why REST ?
 
 RESTful web services allows communication between entities such as browser, Http servers or mobile phone. Robusta is written in Java but, because of REST, can talk with entities written in any other languages.
 
-![](http://lh5.ggpht.com/_D-Y4QMlvJ98/TS8euEapcLI/AAAAAAAAA1w/MqQv4GfuCQY/descriptions.png)
+![](www.robusta.io/img/restful.png)
 
 
 Robusta's Contents
