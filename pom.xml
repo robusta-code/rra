@@ -12,7 +12,7 @@
 
 	<groupId>io.robusta</groupId>
 	<artifactId>rra</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Robusta code Rest Adapter</name>
 	<description>Robusta code Rest Adapter (Rra) allows simple Rest enhancement for new or legacy Java projects </description>
