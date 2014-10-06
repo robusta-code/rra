@@ -13,7 +13,7 @@ Why REST ?
 
 RESTful web services allows communication between entities such as browser, Http servers or mobile phone. Robusta is written in Java but, because of REST, can talk with entities written in any other languages.
 
-![ ](http://lh5.ggpht.com/_D-Y4QMlvJ98/TS8euEapcLI/AAAAAAAAA1w/MqQv4GfuCQY/descriptions.png)
+![](http://lh5.ggpht.com/_D-Y4QMlvJ98/TS8euEapcLI/AAAAAAAAA1w/MqQv4GfuCQY/descriptions.png)
 
 
 Robusta's Contents
@@ -45,33 +45,34 @@ Simple creation of a Resource Representation
 
 Let's say we have :
 
-    User johnDoe = new User(1L, "john.doe@robustaweb.com", "John", "Doe");
+    User johnDoe = new User(1L, "john.doe@robusta.io", "John", "Doe");
 
 where User implements the `Resource` interface.
 
-`johnDoe.getRepresentation().toString()` will return :
+Creating new representation of User like:
 
-      <user>
-        <id>1</id>
-        <email>john.doe@robustaweb.com</email>
-        <firstname>John</firstname>
-        <lastname>Doe</lastname>
-      </user>
+    Representation representation = new GsonRepresentation( johnDoe );
+
+`representation.toString()` will return :
+
+    {
+        "id": 1,
+        "email": "john.doe@robusta.io",
+        "firstname": "John",
+        "lastname": "Doe"
+    }
 
 This is often enough to get informations on the precious concept of User. But you still make easy changes with :
 
-    Representation representation = johnDoe.getRepresentation();
-    representation.set("username", representation.get("email"));
+    representation.remove( "email" );
     System.out.println( representation );
 
-This adds the email as username in the Xml representation :
+This deletes the email in the Json representation :
 
-      <user>
-        <id>1</id>
-        <email>john.doe@robustaweb.com</email>
-        <firstname>John</firstname>
-        <lastname>Doe</lastname>
-        <username>john.doe@robustaweb.com</username>
-      </user>
+    {
+        "id": 1,
+        "firstname": "John",
+        "lastname": "Doe"
+    }
 
 
