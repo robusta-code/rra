@@ -50,12 +50,13 @@
 		</developer>
 	</developers>
 
-
 	<properties>
 		<java-version>1.6</java-version>
 		<org.springframework-version>3.1.1.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
+		<tomee.version>1.7.1</tomee.version>
+		<openejb.javaee.api>6.0-6</openejb.javaee.api>
 	</properties>
 
 	<dependencies>
@@ -87,7 +88,6 @@
 			<version>3.1.0</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
@@ -115,18 +115,48 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- TomEE, Arquillian -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.openejb</groupId> -->
+		<!-- <artifactId>javaee-api</artifactId> -->
+		<!-- <version>${openejb.javaee.api}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>arquillian-tomee-embedded</artifactId>
+			<version>${tomee.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>tomee-jaxrs</artifactId>
+			<version>${tomee.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-
-
 	</dependencies>
 
-	<build>
+<!-- 	<dependencyManagement> -->
+<!-- 		<dependencies> -->
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.jboss.arquillian</groupId> -->
+<!-- 				<artifactId>arquillian-bom</artifactId> -->
+<!-- 				<version>1.1.3.Final</version> -->
+<!-- 				<scope>import</scope> -->
+<!-- 				<type>pom</type> -->
+<!-- 			</dependency> -->
+<!-- 		</dependencies> -->
+<!-- 	</dependencyManagement> -->
 
+
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -138,8 +168,16 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.openejb.maven</groupId>
+				<artifactId>tomee-maven-plugin</artifactId>
+				<version>${tomee.version}</version>
+				<configuration>
+					<tomeeVersion>${tomee.version}</tomeeVersion>
+					<tomeeClassifier>jaxrs</tomeeClassifier>
+				</configuration>
+			</plugin>
 		</plugins>
-
 	</build>
 
 	<reporting>
@@ -150,9 +188,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-
-
-
-
 </project>
