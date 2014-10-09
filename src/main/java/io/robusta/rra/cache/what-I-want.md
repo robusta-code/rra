@@ -1,7 +1,7 @@
 On the topic
 ======
 
-http://stackoverflow.com/questions/1188587/cache-invalidation-is-there-a-general-solution
+[stack](http://stackoverflow.com/questions/1188587/cache-invalidation-is-there-a-general-solution)
 
 
 [Martin Fowler on Aggregates](http://martinfowler.com/bliki/DDD_Aggregate.html)
@@ -32,10 +32,11 @@ key in cache is :  `profile:14`
         profile.getId(); # returns john.getId()
         profile.getComments() ; # returns john's comments, including comment 28
 
-        Representation rep = new Gsonrepresentation(profile);
+        //Representation rep = new Gsonrepresentation(profile);
         Cache cache =  MapCache.getInstance();
-        cache.add(rep, "profile:14");
-
+        // case with Resource in the cache
+        cache.add(profile, "profile:14");
+        
 Later :
 
         cache.get("profile:14"); # -> returns John's profile
@@ -44,10 +45,33 @@ Later :
         # And the problem is :
         cache.invalidate("comment:28"); # -> remove ALSO John's profile from cache
 
+
+Case with representations in cache
+----
+
+A representation may be built from many Resources and make complex operations such as sorting. Thus it might be interesting to cache it.
+The developper will judge if it's important or not to have stale data.
+ 
+	Representation representation = new GsonRepresentation();
+	
+	for (User u : getSortedUsers()){
+		representation.set(u.getId(),u);  
+	}
+	
+	cache.put("/user/sorted", representation);
+	
+Once we edit a user, the representation is stale and we have NO control. 
+
+
+
+
+
+
+
 Strategies
 ====
 
-Two strategies :
+First strategy : Validation
 ----
 
 - Cache has double map : cache will get bigger and slower
@@ -59,7 +83,7 @@ Last solution look quite easy, but Aggregate elements must all have a timer...
 Setters on each classic attributes will have to change the timer. Ouch !
 
 
-Double Cache
+Second strategy : Dependency control
 -----
 
 key            | Resource
