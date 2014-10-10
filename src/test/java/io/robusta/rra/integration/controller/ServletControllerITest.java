@@ -1,15 +1,13 @@
-package io.robusta.rra.integration;
+package io.robusta.rra.integration.controller;
 
 import static org.junit.Assert.assertEquals;
-import io.robusta.rra.integration.jaxRsController.implementation.JaxRsControllerImpl;
-import io.robusta.rra.integration.jaxRsController.implementation.MyClientPropertyJaxRs;
+import io.robusta.rra.integration.controller.servletController.implementation.MyClientPropertyServlet;
+import io.robusta.rra.integration.controller.servletController.implementation.ServletControllerImpl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -22,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JaxRsControllerITest {
+public class ServletControllerITest {
 	/**
 	 * ShrinkWrap is used to create a war file on the fly.
 	 *
@@ -33,7 +31,8 @@ public class JaxRsControllerITest {
 	 */
 	@Deployment
 	public static WebArchive createDeployment() {
-		return ShrinkWrap.create(WebArchive.class).addClasses(JaxRsControllerImpl.class, MyClientPropertyJaxRs.class);
+		return ShrinkWrap.create(WebArchive.class).addClasses(ServletControllerImpl.class,
+				MyClientPropertyServlet.class);
 	}
 
 	/**
@@ -49,33 +48,21 @@ public class JaxRsControllerITest {
 	private URL webappUrl;
 
 	private WebClient initWebClient() throws URISyntaxException {
-		return WebClient.create(webappUrl.toURI());
+		return WebClient.create(webappUrl.toURI()).path("test").accept(MediaType.APPLICATION_JSON)
+				.type("application/json");
 
 	}
 
 	@Test
-	public void postAgent() throws URISyntaxException {
-		final Response response = initWebClient().path("jaxrs/agent").post(null);
-		assertEquals(200, response.getStatus());
-	}
-
-	@Test
-	public void postAuth() throws URISyntaxException {
-		final Response response = initWebClient().path("jaxrs/auth").post(null);
-		assertEquals(426, response.getStatus());
-	}
-
-	@Test
-	public void postValidate() throws URISyntaxException {
+	public void doPost() throws URISyntaxException {
 		String json = "{\"email\":\"email\",\"name\":\"name\"}";
-		final Response response = initWebClient().path("jaxrs/validate").post(json);
+		final Response response = initWebClient().post(json);
 		assertEquals(200, response.getStatus());
-
 	}
 
 	@Test
-	public void getHeader() throws URISyntaxException, IOException {
-		final Response response = initWebClient().path("jaxrs/header").get();
+	public void doGet() throws URISyntaxException {
+		final Response response = initWebClient().get();
 		assertEquals(200, response.getStatus());
 	}
 

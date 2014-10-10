@@ -1,7 +1,7 @@
-package io.robusta.rra.integration.springController.Implementation;
+package io.robusta.rra.integration.controller.springController.Implementation;
 
 import io.robusta.rra.controller.SpringController;
-import io.robusta.rra.integration.servletController.implementation.MyClientPropertyServlet;
+import io.robusta.rra.integration.controller.servletController.implementation.MyClientPropertyServlet;
 
 import java.io.IOException;
 import java.util.Locale;

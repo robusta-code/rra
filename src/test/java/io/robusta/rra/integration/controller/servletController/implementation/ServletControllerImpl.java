@@ -1,4 +1,4 @@
-package io.robusta.rra.integration.servletController.implementation;
+package io.robusta.rra.integration.controller.servletController.implementation;
 
 import java.io.IOException;
 

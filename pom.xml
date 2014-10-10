@@ -134,6 +134,17 @@
 			<version>${tomee.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.openejb</groupId> -->
+		<!-- <artifactId>tomee-webapp</artifactId> -->
+		<!-- <version>${tomee.version}</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.openejb</groupId> -->
+		<!-- <artifactId>tomee-webservices</artifactId> -->
+		<!-- <version>1.7.1</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -143,17 +154,17 @@
 		</dependency>
 	</dependencies>
 
-<!-- 	<dependencyManagement> -->
-<!-- 		<dependencies> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.jboss.arquillian</groupId> -->
-<!-- 				<artifactId>arquillian-bom</artifactId> -->
-<!-- 				<version>1.1.3.Final</version> -->
-<!-- 				<scope>import</scope> -->
-<!-- 				<type>pom</type> -->
-<!-- 			</dependency> -->
-<!-- 		</dependencies> -->
-<!-- 	</dependencyManagement> -->
+	<!-- <dependencyManagement> -->
+	<!-- <dependencies> -->
+	<!-- <dependency> -->
+	<!-- <groupId>org.jboss.arquillian</groupId> -->
+	<!-- <artifactId>arquillian-bom</artifactId> -->
+	<!-- <version>1.1.3.Final</version> -->
+	<!-- <scope>import</scope> -->
+	<!-- <type>pom</type> -->
+	<!-- </dependency> -->
+	<!-- </dependencies> -->
+	<!-- </dependencyManagement> -->
 
 
 	<build>

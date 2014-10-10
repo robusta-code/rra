@@ -1,4 +1,4 @@
-package io.robusta.rra.integration.springController.Implementation;
+package io.robusta.rra.integration.controller.springController.Implementation;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

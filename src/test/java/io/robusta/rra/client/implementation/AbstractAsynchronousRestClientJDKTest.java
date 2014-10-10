@@ -48,7 +48,7 @@ public class AbstractAsynchronousRestClientJDKTest {
     public void testSetApplicationUri() {
     }
 
-    // @Test
+//     @Test
     public void testSetAuthorizationValue() throws Exception {
         client.setAuthorizationValue( "James Bond" );
 
@@ -72,7 +72,7 @@ public class AbstractAsynchronousRestClientJDKTest {
             }
         };
 
-		client.post("api/ad/gson", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
+		client.post("api/ad/create", new GsonRepresentation("{\"email\":\"email\",\"name\":\"name\"}"), cb);
 		client.join();
 		System.out.println("client.getHttpCode()=" + client.getHttpCode());
 		assertTrue(client.getHttpCode() < 300);

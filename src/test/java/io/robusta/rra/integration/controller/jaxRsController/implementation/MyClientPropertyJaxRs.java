@@ -1,4 +1,4 @@
-package io.robusta.rra.integration.jaxRsController.implementation;
+package io.robusta.rra.integration.controller.jaxRsController.implementation;
 
 import io.robusta.rra.controller.ClientPropertyJaxRs;
 
