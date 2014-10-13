@@ -19,11 +19,10 @@ import java.util.Set;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>.
- *
- * This cache has a fixed maximum number of elements (<code>cacheSize</code>).
- * If the cache is full and another entry is added, the LRU (least recently
- * used) entry is dropped.
- *
+ * 
+ * This cache has a fixed maximum number of elements (<code>cacheSize</code>). If the cache is full and another entry is
+ * added, the LRU (least recently used) entry is dropped.
+ * 
  * This class is thread-safe. All methods of this class are synchronized.
  */
 
@@ -70,8 +69,7 @@ public class Cache {
      * 
      * @param key
      *            the key whose associated value is to be returned.
-     * @return the value associated to this key, or null if no value with this
-     *         key exists in the cache.
+     * @return the value associated to this key, or null if no value with this key exists in the cache.
      */
     public synchronized Resource<?> get( String key ) {
         Resource<?> resource = mapCache.get( key );
@@ -83,10 +81,9 @@ public class Cache {
     }
 
     /**
-     * Adds an entry to this cache. The new entry becomes the MRU (most recently
-     * used) entry. If an entry with the specified key already exists in the
-     * cache, it is replaced by the new entry. If the cache is full, the LRU
-     * (least recently used) entry is removed from the cache.
+     * Adds an entry to this cache. The new entry becomes the MRU (most recently used) entry. If an entry with the
+     * specified key already exists in the cache, it is replaced by the new entry. If the cache is full, the LRU (least
+     * recently used) entry is removed from the cache.
      * 
      * @param key
      *            the key with which the specified value is to be associated.
@@ -94,7 +91,7 @@ public class Cache {
      *            a value to be associated with the specified key.
      */
     public synchronized void put( Resource<?> value ) {
-        String resourceKey = value.getPrefix() + value.getId();
+        String resourceKey = value.getPrefix() + ":" + value.getId();
         mapCache.put( resourceKey, value );
         recursiveDependencies( resourceKey, value );
 
@@ -107,7 +104,7 @@ public class Cache {
                     field.setAccessible( true );
                     Resource<?> resourceChild = (Resource<?>) field.get( resource );
                     if ( resourceChild != null ) {
-                        String resourceChildKey = resourceChild.getPrefix() + resourceChild.getId();
+                        String resourceChildKey = resourceChild.getPrefix() + ":" + resourceChild.getId();
                         if ( !mapCacheDependencies.containsKey( resourceChildKey ) ) {
                             Set<String> set = Collections.synchronizedSet( new HashSet<String>() );
                             set.add( resourceKey );
@@ -124,12 +121,11 @@ public class Cache {
                     e.printStackTrace();
                 }
             }
-            System.out.println( "field.getType()=" + field.getType() );
 
+            // recursive on collections
             if ( Collection.class.isAssignableFrom( field.getType() ) ) {
                 Type type = field.getGenericType();
                 if ( type instanceof ParameterizedType ) {
-
                     ParameterizedType pType = (ParameterizedType) type;
                     Type[] arr = pType.getActualTypeArguments();
                     for ( Type tp : arr ) {
@@ -139,29 +135,27 @@ public class Cache {
                             try {
                                 field.setAccessible( true );
                                 collectionChild = (Collection<?>) field.get( resource );
-                                for ( Object cl : collectionChild ) {
-                                    if ( cl != null ) {
-                                        field.setAccessible( true );
-                                        Resource<?> resourceChild = (Resource<?>) ( (Field) cl ).get( resource );
-                                        String resourceChildKey = resourceChild.getPrefix() +
-                                                resourceChild.getId();
-                                        if ( !mapCacheDependencies.containsKey( resourceChildKey ) ) {
-                                            Set<String> set = Collections.synchronizedSet( new
-                                                    HashSet<String>() );
-                                            set.add( resourceKey );
-                                            mapCacheDependencies.put( resourceChildKey, set );
-                                        } else {
-                                            Set<String> set = mapCacheDependencies.get( resourceChildKey );
-                                            set.add( resourceKey );
+                                if ( collectionChild != null ) {
+                                    for ( Object cl : collectionChild ) {
+                                        if ( cl != null ) {
+                                            String resourceChildKey = ( (Resource) cl ).getPrefix() + ":" +
+                                                    ( (Resource) cl ).getId();
+                                            if ( !mapCacheDependencies.containsKey( resourceChildKey ) ) {
+                                                Set<String> set = Collections.synchronizedSet( new
+                                                        HashSet<String>() );
+                                                set.add( resourceKey );
+                                                mapCacheDependencies.put( resourceChildKey, set );
+                                            } else {
+                                                Set<String> set = mapCacheDependencies.get( resourceChildKey );
+                                                set.add( resourceKey );
+                                            }
+                                            recursiveDependencies( resourceKey, (Resource) cl );
                                         }
-                                        recursiveDependencies( resourceKey, resourceChild );
                                     }
                                 }
                             } catch ( IllegalArgumentException e ) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             } catch ( IllegalAccessException e ) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
                         }
@@ -219,8 +213,7 @@ public class Cache {
     }
 
     /**
-     * Returns a <code>Collection</code> that contains a copy of all cache
-     * entries.
+     * Returns a <code>Collection</code> that contains a copy of all cache entries.
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
