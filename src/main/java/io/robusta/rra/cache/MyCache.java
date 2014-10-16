@@ -1,6 +1,8 @@
 package io.robusta.rra.cache;
 
+import io.robusta.rra.representation.Representation;
 import io.robusta.rra.resource.Resource;
+import io.robusta.rra.resource.ResourceList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -20,24 +22,26 @@ import java.util.Set;
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>.
  * 
- * This cache has a fixed maximum number of elements (<code>cacheSize</code>). If the cache is full and another entry is
- * added, the LRU (least recently used) entry is dropped.
+ * This cache has a fixed maximum number of elements (<code>cacheSize</code>).
+ * If the cache is full and another entry is added, the LRU (least recently
+ * used) entry is dropped.
  * 
  * This class is thread-safe. All methods of this class are synchronized.
  */
 
-public class Cache {
+public class MyCache {
 
-    private static Cache                    instance;
-    private static final float              hashTableLoadFactor = 0.75f;
+    private static MyCache                        instance;
+    private static final float                    hashTableLoadFactor = 0.75f;
 
-    private LinkedHashMap<String, Resource> mapCache;
-    private Map<String, Set<String>>        mapCacheDependencies;
-    private int                             cacheSize;
+    private LinkedHashMap<String, Representation> mapCache;
+    private Map<String, Set<String>>              mapCacheDependencies;
+    public static int                             defaultCacheSize    = 10;
+    private int                                   cacheSize;
 
-    public static Cache getInstance() {
+    public static MyCache getInstance() {
         if ( instance == null ) {
-            instance = new Cache( 5 );
+            instance = new MyCache( defaultCacheSize );
         }
         return instance;
     }
@@ -48,16 +52,16 @@ public class Cache {
      * @param cacheSize
      *            the maximum number of entries that will be kept in this cache.
      */
-    private Cache( int cacheSize ) {
+    private MyCache( int cacheSize ) {
         this.cacheSize = cacheSize;
         int hashTableCapacity = (int) Math.ceil( cacheSize / hashTableLoadFactor ) + 1;
-        mapCache = new LinkedHashMap<String, Resource>( hashTableCapacity, hashTableLoadFactor, true ) {
+        mapCache = new LinkedHashMap<String, Representation>( hashTableCapacity, hashTableLoadFactor, true ) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry( Map.Entry<String, Resource> eldest ) {
-                return size() > Cache.this.cacheSize;
+            protected boolean removeEldestEntry( Map.Entry<String, Representation> eldest ) {
+                return size() > MyCache.this.cacheSize;
             }
         };
         mapCacheDependencies = new Hashtable<String, Set<String>>();
@@ -69,51 +73,71 @@ public class Cache {
      * 
      * @param key
      *            the key whose associated value is to be returned.
-     * @return the value associated to this key, or null if no value with this key exists in the cache.
+     * @return the value associated to this key, or null if no value with this
+     *         key exists in the cache.
      */
-    public synchronized Resource<?> get( String key ) {
-        Resource<?> resource = mapCache.get( key );
-        if ( resource != null ) {
-            System.out.println( key + ": get in cache" );
-            return resource;
+    public synchronized Representation<?> get( String key ) {
+        Representation<?> representation = mapCache.get( key );
+        if ( representation != null ) {
+            System.out.println( key + ": get from cache" );
+            return representation;
         }
         return null;
     }
 
     /**
-     * Adds an entry to this cache. The new entry becomes the MRU (most recently used) entry. If an entry with the
-     * specified key already exists in the cache, it is replaced by the new entry. If the cache is full, the LRU (least
-     * recently used) entry is removed from the cache.
+     * Adds an entry to this cache. The new entry becomes the MRU (most recently
+     * used) entry. If an entry with the specified key already exists in the
+     * cache, it is replaced by the new entry. If the cache is full, the LRU
+     * (least recently used) entry is removed from the cache.
      * 
      * @param key
      *            the key with which the specified value is to be associated.
      * @param value
      *            a value to be associated with the specified key.
      */
-    public synchronized void put( Resource<?> value ) {
-        String resourceKey = value.getPrefix() + ":" + value.getId();
-        mapCache.put( resourceKey, value );
-        recursiveDependencies( resourceKey, value );
-
+    public synchronized void put( String representationKey, Representation representation, Resource<?> resource ) {
+        mapCache.put( representationKey, representation );
+        String resourceKey = resource.getPrefix() + ":" + resource.getId();
+        mapCacheDependenciesAddEntry( representationKey, resourceKey );
+        recursiveDependencies( representationKey, resource, Collections.synchronizedSet( new HashSet<String>() ) );
     }
 
-    void recursiveDependencies( String resourceKey, Resource<?> resource ) {
+    /**
+     * Adds an entry to this cache. The new entry becomes the MRU (most recently
+     * used) entry. If an entry with the specified key already exists in the
+     * cache, it is replaced by the new entry. If the cache is full, the LRU
+     * (least recently used) entry is removed from the cache.
+     * 
+     * @param key
+     *            the key with which the specified value is to be associated.
+     * @param representationKey
+     * @param representation
+     * @param resource
+     */
+
+    public synchronized void put( String representationKey, Representation representation,
+            ResourceList<?, ?> resources ) {
+        mapCache.put( representationKey, representation );
+        for ( Resource<?> resource : resources ) {
+            String resourceKey = resource.getPrefix() + ":" + resource.getId();
+            mapCacheDependenciesAddEntry( representationKey, resourceKey );
+            recursiveDependencies( representationKey, resource, Collections.synchronizedSet( new HashSet<String>() ) );
+        }
+    }
+
+    void recursiveDependencies( String representationKey, Resource<?> resource, Set setLoop ) {
+        setLoop.add( resource.getPrefix() + ":" + resource.getId() );
         for ( Field field : getAllFields( new LinkedList<Field>(), resource.getClass() ) ) {
             if ( Resource.class.isAssignableFrom( field.getType() ) ) {
                 try {
                     field.setAccessible( true );
                     Resource<?> resourceChild = (Resource<?>) field.get( resource );
-                    if ( resourceChild != null ) {
+                    if ( resourceChild != null
+                            && !setLoop.contains( resourceChild.getPrefix() + ":" + resourceChild.getId() ) ) {
                         String resourceChildKey = resourceChild.getPrefix() + ":" + resourceChild.getId();
-                        if ( !mapCacheDependencies.containsKey( resourceChildKey ) ) {
-                            Set<String> set = Collections.synchronizedSet( new HashSet<String>() );
-                            set.add( resourceKey );
-                            mapCacheDependencies.put( resourceChildKey, set );
-                        } else {
-                            Set<String> set = mapCacheDependencies.get( resourceChildKey );
-                            set.add( resourceKey );
-                        }
-                        recursiveDependencies( resourceKey, resourceChild );
+                        mapCacheDependenciesAddEntry( representationKey, resourceChildKey );
+                        recursiveDependencies( representationKey, resourceChild, setLoop );
                     }
                 } catch ( IllegalArgumentException e ) {
                     e.printStackTrace();
@@ -137,19 +161,13 @@ public class Cache {
                                 collectionChild = (Collection<?>) field.get( resource );
                                 if ( collectionChild != null ) {
                                     for ( Object cl : collectionChild ) {
-                                        if ( cl != null ) {
+                                        if ( cl != null
+                                                && !setLoop.contains( ( (Resource) cl ).getPrefix() + ":"
+                                                        + ( (Resource) cl ).getId() ) ) {
                                             String resourceChildKey = ( (Resource) cl ).getPrefix() + ":" +
                                                     ( (Resource) cl ).getId();
-                                            if ( !mapCacheDependencies.containsKey( resourceChildKey ) ) {
-                                                Set<String> set = Collections.synchronizedSet( new
-                                                        HashSet<String>() );
-                                                set.add( resourceKey );
-                                                mapCacheDependencies.put( resourceChildKey, set );
-                                            } else {
-                                                Set<String> set = mapCacheDependencies.get( resourceChildKey );
-                                                set.add( resourceKey );
-                                            }
-                                            recursiveDependencies( resourceKey, (Resource) cl );
+                                            mapCacheDependenciesAddEntry( representationKey, resourceChildKey );
+                                            recursiveDependencies( representationKey, (Resource) cl, setLoop );
                                         }
                                     }
                                 }
@@ -175,6 +193,18 @@ public class Cache {
         }
 
         return fields;
+    }
+
+    private void mapCacheDependenciesAddEntry( String representationKey, String resourceKey ) {
+        if ( !mapCacheDependencies.containsKey( resourceKey ) ) {
+            Set<String> set = Collections.synchronizedSet( new
+                    HashSet<String>() );
+            set.add( representationKey );
+            mapCacheDependencies.put( resourceKey, set );
+        } else {
+            Set<String> set = mapCacheDependencies.get( resourceKey );
+            set.add( representationKey );
+        }
     }
 
     /**
@@ -213,12 +243,13 @@ public class Cache {
     }
 
     /**
-     * Returns a <code>Collection</code> that contains a copy of all cache entries.
+     * Returns a <code>Collection</code> that contains a copy of all cache
+     * entries.
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public synchronized Collection<Map.Entry<String, Resource>> getAll() {
-        return new ArrayList<Map.Entry<String, Resource>>( mapCache.entrySet() );
+    public synchronized Collection<Map.Entry<String, Representation>> getAll() {
+        return new ArrayList<Map.Entry<String, Representation>>( mapCache.entrySet() );
     }
 
     public synchronized ArrayList<Entry<String, Set<String>>> getAllDependenciesMap() {
@@ -226,10 +257,8 @@ public class Cache {
     }
 
     public void displayCache() {
-        System.out.println( "----------------" );
-        System.out.println( "***Contenu du cache***" );
+        System.out.println( "*** MyCache: Contenu du cache***" );
         System.out.println( getAll() );
-        System.out.println( "----------------" );
         System.out.println( "***Contenu de dependencie map***" );
         System.out.println( getAllDependenciesMap() );
         System.out.println( "----------------" );

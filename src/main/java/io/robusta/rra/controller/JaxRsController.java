@@ -27,6 +27,7 @@ import javax.ws.rs.core.UriInfo;
 public class JaxRsController {
 
     public static Representation  defaultRepresentation = Rra.defaultRepresentation;
+    public static int             maxEntriesLocalHeap   = 50;
 
     /**
      * 
