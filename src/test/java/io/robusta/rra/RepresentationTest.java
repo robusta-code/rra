@@ -23,16 +23,11 @@
 
 package io.robusta.rra;
 
-
+import static org.junit.Assert.*;
 import io.robusta.rra.files.Garden;
 import io.robusta.rra.files.House;
 import io.robusta.rra.files.Room;
 import io.robusta.rra.representation.Representation;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -41,279 +36,286 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
- * Created by  Nicolas Zozol for Robusta Code
- * @author  Nicolas Zozol
+ * Created by Nicolas Zozol for Robusta Code
+ * 
+ * @author Nicolas Zozol
  */
-public abstract class RepresentationTest<T extends Representation>  {
+public abstract class RepresentationTest<T extends Representation> {
 
-    protected static String jsonContent;
-    protected static String xml;
-    protected boolean isJson;
-    protected T schoolRepresentation;
-    protected T emptyRepresentation;
-    protected static House whiteHouse;
+	protected static String jsonContent;
+	protected static String xml;
+	protected boolean isJson;
+	protected T schoolRepresentation;
+	protected T emptyRepresentation;
+	protected static House whiteHouse;
 
-    @BeforeClass
-    public static void setUpClassToto() throws Exception {
-        String userDir = System.getProperty("user.dir");
-        String mavenPath="/src/test/java";
-        String packagePath = RepresentationTest.class.getPackage().getName().replaceAll("\\.", "/");
-        String filePlace = userDir+mavenPath+"/"+packagePath+"/files/";
+	@BeforeClass
+	public static void setUpClassToto() throws Exception {
+		String userDir = System.getProperty("user.dir");
+		String mavenPath = "/src/test/java";
+		String packagePath = RepresentationTest.class.getPackage().getName().replaceAll("\\.", "/");
+		String filePlace = userDir + mavenPath + "/" + packagePath + "/files/";
 
+		jsonContent = readFile(filePlace + "representation.json");
+		xml = readFile(filePlace + "representation.xml");
 
-        jsonContent = readFile(filePlace + "representation.json");
-        xml = readFile(filePlace + "representation.xml");
+		whiteHouse = new House("White House", 12.25f);
+		Room cuisine = new Room("cuisine", 12.3f);
+		Room salon = new Room("salon", 45f);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(cuisine);
+		rooms.add(salon);
+		whiteHouse.setRooms(rooms);
+		whiteHouse.setGarden(new Garden("jardin", 300, true));
 
-        whiteHouse = new House("White House", 12.25f);
-        Room cuisine=new Room("cuisine",12.3f);
-        Room salon=new Room("salon",45f);
-        List<Room> rooms=new ArrayList<Room>();
-        rooms.add(cuisine);
-        rooms.add(salon);
-        whiteHouse.setRooms(rooms);
-        whiteHouse.setGarden(new Garden("jardin",300,true));
+	}
 
-    }
-    @Before
-    public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 
-    }
+	}
 
-    @After
-    public void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 
-    }
+	}
 
-    @Test
-    public void testToString() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        assertTrue(whiteHouseRepresentation.toString().contains("White House"));
-    }
+	@Test
+	public void testToString() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		assertTrue(whiteHouseRepresentation.toString().contains("White House"));
+	}
 
-    @Test
-    public void testGetWithKey() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        assertTrue(whiteHouseRepresentation.get("name").contains("White"));
-    }
+	@Test
+	public void testGetWithKey() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		assertTrue(whiteHouseRepresentation.get("name").contains("White"));
+	}
 
-    @Test
-    public void testGetWithClass() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        assertTrue(whiteHouseRepresentation.get(House.class).equals(whiteHouse));
-    }
+	@Test
+	public void testGetWithClass() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		assertTrue(whiteHouseRepresentation.get(House.class).equals(whiteHouse));
+	}
 
-    @Test
-    public void testHas() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        assertTrue(whiteHouseRepresentation.has("garden","rooms") == true);
-    }
+	@Test
+	public void testHas() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		assertTrue(whiteHouseRepresentation.has("garden", "rooms") == true);
+	}
 
+	@Test
+	public void testGetMissingKeys() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		whiteHouseRepresentation.set("test", "");
+		whiteHouseRepresentation.has("garden", "test");
 
-    @Test
-    public void testGetMissingKeys() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        whiteHouseRepresentation.set("test","");
-        whiteHouseRepresentation.has("garden","test");
+		assertTrue(whiteHouseRepresentation.getMissingKeys().contains("test"));
 
-        assertTrue(whiteHouseRepresentation.getMissingKeys().contains("test"));
+	}
 
-    }
+	@Test
+	public void testSet() throws Exception {
 
-    @Test
-    public void testSet() throws Exception {
+		String fieldValue = "some Value";
+		Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
+		assertTrue(representation.get("newField").equals(fieldValue));
 
-        String fieldValue = "some Value";
-        Representation representation = createNewRepresentation(whiteHouse).set("newField", fieldValue);
-        assertTrue(representation.get("newField").equals(fieldValue));
+	}
 
-    }
+	@Test
+	public void testSetWithClass() throws Exception {
+		Room bedroom = new Room("bedroom", 12.3f);
+		Room bathroom = new Room("bathroom", 45f);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(bedroom);
+		rooms.add(bathroom);
+		Representation representation = createNewRepresentation(whiteHouse).set("rooms", rooms);
 
-    @Test
-    public void testSetWithClass() throws Exception {
-        Room bedroom=new Room("bedroom",12.3f);
-        Room bathroom=new Room("bathroom",45f);
-        List<Room> rooms=new ArrayList<Room>();
-        rooms.add(bedroom);
-        rooms.add(bathroom);
-        Representation representation = createNewRepresentation(whiteHouse).set("rooms", rooms);
+		// System.out.println(representation.toString());
+		assertTrue(representation.fetch("rooms").toString().contains("bedroom"));
+	}
 
-        //System.out.println(representation.toString());
-        assertTrue(representation.fetch("rooms").toString().contains("bedroom"));
-    }
+	@Test
+	public void testGetValues() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		// System.out.println(whiteHouseRepresentation.getClass() + " - "
+		// +whiteHouseRepresentation.getValues("rooms"));
+		assertTrue(whiteHouseRepresentation.getValues("rooms").toString().contains("cuisine"));
 
-    @Test
-    public void testGetValues() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-//        System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.getValues("rooms"));
-        assertTrue(whiteHouseRepresentation.getValues("rooms").toString().contains("cuisine"));
+	}
 
-    }
+	@Test
+	public void testGetValuesWithClass() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		// System.out.println(whiteHouseRepresentation.getClass() + " - "
+		// +whiteHouseRepresentation.getValues(Room.class,"rooms"));
+		assertTrue(whiteHouseRepresentation.getValues(Room.class, "rooms").toString().contains("cuisine"));
 
-    @Test
-    public void testGetValuesWithClass() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.getValues(Room.class,"rooms"));
-        assertTrue(whiteHouseRepresentation.getValues(Room.class,"rooms").toString().contains("cuisine"));
+	}
 
-    }
+	@Test
+	public void testAdd() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		List<String> trees = new ArrayList<String>();
+		trees.add("tree1");
+		trees.add("tree2");
+		whiteHouseRepresentation.set("trees", trees);
+		whiteHouseRepresentation.add("trees", "tree3");
+		// System.out.println(whiteHouseRepresentation.getClass() + " - "
+		// +whiteHouseRepresentation.toString());
+		assertTrue(whiteHouseRepresentation.toString().contains("tree3"));
+	}
 
-    @Test
-    public void testAdd() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        List<String> trees= new ArrayList<String>();
-        trees.add("tree1");
-        trees.add("tree2");
-        whiteHouseRepresentation.set("trees", trees);
-        whiteHouseRepresentation.add("trees","tree3");
-        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.toString());
-        assertTrue(whiteHouseRepresentation.toString().contains("tree3"));
-    }
+	@Test
+	public void testAddResource() throws Exception {
 
-    @Test
-    public void testAddResource() throws Exception {
+	}
 
-    }
+	@Test
+	public void testAddAll() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		List<String> trees = new ArrayList<String>();
+		trees.add("tree1");
+		trees.add("tree2");
+		whiteHouseRepresentation.set("trees", trees);
 
-    @Test
-    public void testAddAll() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        List<String> trees= new ArrayList<String>();
-        trees.add("tree1");
-        trees.add("tree2");
-        whiteHouseRepresentation.set("trees", trees);
+		List<String> newTrees = new ArrayList<String>();
+		newTrees.add("tree3");
+		newTrees.add("tree4");
+		whiteHouseRepresentation.addAll("trees", newTrees);
+		// System.out.println(whiteHouseRepresentation.getClass() + " - "
+		// +whiteHouseRepresentation.toString());
+		assertTrue(whiteHouseRepresentation.toString().contains("tree4"));
+	}
 
-        List<String> newTrees= new ArrayList<String>();
-        newTrees.add("tree3");
-        newTrees.add("tree4");
-        whiteHouseRepresentation.addAll("trees",newTrees);
-        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.toString());
-        assertTrue(whiteHouseRepresentation.toString().contains("tree4"));
-    }
+	@Test
+	public void testMerge() throws Exception {
 
-    @Test
-    public void testMerge() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		Representation representationMerge = schoolRepresentation.merge("school", "house", whiteHouseRepresentation);
 
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        Representation representationMerge=schoolRepresentation.merge("school", "house", whiteHouseRepresentation);
+		assertTrue(representationMerge.fetch("school").toString().contains("students"));
+		assertTrue(representationMerge.fetch("house").toString().contains("White House"));
 
-        assertTrue(representationMerge.fetch("school").toString().contains("students"));
-        assertTrue(representationMerge.fetch("house").toString().contains("White House"));
+	}
 
-    }
+	@Test
+	public void testRemove() throws Exception {
 
-    @Test
-    public void testRemove() throws Exception {
+		Representation representation = createNewRepresentation(whiteHouse);
+		Representation representationNew = representation.remove("price");
+		assertFalse(representationNew.toString().contains("price"));
 
+		assertTrue(representationNew.toString().contains("cuisine"));
+		assertTrue(representationNew.toString().contains("cloture"));
 
-        Representation representation = createNewRepresentation(whiteHouse);
-        Representation representationNew=representation.remove("price");
-        assertFalse(representationNew.toString().contains("price"));
+		representationNew = representation.remove("garden.cloture");
+		assertTrue(!representationNew.toString().contains("cloture"));
 
-        assertTrue(representationNew.toString().contains("cuisine"));
-        assertTrue(representationNew.toString().contains("cloture"));
+	}
 
-        representationNew=representation.remove("garden.cloture");
-        assertTrue(!representationNew.toString().contains("cloture"));
+	@Test
+	public void testFetch() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+		assertTrue(whiteHouseRepresentation.fetch("rooms").toString().contains("cuisine"));
+	}
 
-    }
+	@Test
+	public void testCopy() throws Exception {
+		Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
 
-    @Test
-    public void testFetch() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
-        assertTrue(whiteHouseRepresentation.fetch("rooms").toString().contains("cuisine"));
-    }
+		// System.out.println(whiteHouseRepresentation.getClass() + " - "
+		// +whiteHouseRepresentation.copy().toString());
+		assertTrue(whiteHouseRepresentation.copy().toString().equals(whiteHouseRepresentation.toString()));
+	}
 
-    @Test
-    public void testCopy() throws Exception {
-        Representation whiteHouseRepresentation = createNewRepresentation(whiteHouse);
+	@Test
+	public void testGetRepresentation() throws Exception {
 
-        //System.out.println(whiteHouseRepresentation.getClass() + " - " +whiteHouseRepresentation.copy().toString());
-        assertTrue(whiteHouseRepresentation.copy().toString().equals(whiteHouseRepresentation.toString()));
-    }
+	}
 
-    @Test
-    public void testGetRepresentation() throws Exception {
+	/**
+	 * Reads a file line after line.
+	 *
+	 * @param path
+	 *            Full path of the file ('c:/webapp/data.xml' or
+	 *            '/var/webapp/data.xml')
+	 * @return The content of the file.
+	 * @throws java.io.FileNotFoundException
+	 */
+	public static String readFile(String path) throws IOException {
 
-    }
+		FileReader reader = null;
 
-    /**
-     * Reads a file line after line.
-     *
-     * @param path Full path of the file ('c:/webapp/data.xml' or '/var/webapp/data.xml')
-     * @return The content of the file.
-     * @throws java.io.FileNotFoundException
-     */
-    public static String readFile(String path) throws IOException {
+		BufferedReader buffReader = null;
 
-        FileReader reader = null;
+		StringBuilder text = new StringBuilder();
 
-        BufferedReader buffReader = null;
+		try {
+			reader = new FileReader(path);
+			buffReader = new BufferedReader(reader);
 
-        StringBuilder text = new StringBuilder();
+			String tempLine;
+			while ((tempLine = buffReader.readLine()) != null) {
+				text.append(tempLine).append("\n");
+			}
+		} finally {
+			reader.close();
+			buffReader.close();
+		}
+		return text.toString();
+	}
 
-        try {
-            reader = new FileReader(path);
-            buffReader = new BufferedReader(reader);
+	public static String readTestFile(String file) throws IOException {
+		String userDir = System.getProperty("user.dir");
+		String mavenPath = "/src/test/java";
+		String packagePath = RepresentationTest.class.getPackage().getName().replaceAll("\\.", "/");
+		String filePlace = userDir + mavenPath + "/" + packagePath + "/files/";
 
-            String tempLine;
-            while ( (tempLine = buffReader.readLine())!=null ) {
-                text.append(tempLine).append("\n");
-            }
-        } finally {
-            reader.close();
-            buffReader.close();
-        }
-        return text.toString();
-    }
+		return readFile(filePlace + file);
 
-    public  static String readTestFile(String file) throws IOException {
-        String userDir = System.getProperty("user.dir");
-        String mavenPath="/src/test/java";
-        String packagePath = RepresentationTest.class.getPackage().getName().replaceAll("\\.", "/");
-        String filePlace = userDir+mavenPath+"/"+packagePath+"/files/";
+	}
 
+	public static String readJson() {
+		try {
+			return readTestFile("representation.json");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fail("Can't read representation.json file");
+		return null;
+	}
 
-        return readFile(filePlace + file);
+	public static String readXml() {
+		try {
+			return readTestFile("representation.xml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		fail("Can't read representation.xml file");
+		return null;
+	}
 
-    }
+	public Representation createNewRepresentation(Object o) {
+		return this.emptyRepresentation.createNewRepresentation(o);
+	}
 
-    public  static String readJson(){
-        try {
-            return readTestFile("representation.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        fail("Can't read representation.json file");
-        return null;
-    }
+	public Representation createNewRepresentation(String s) {
+		return this.emptyRepresentation.createNewRepresentation(s);
+	}
 
-    public static  String readXml(){
-        try {
-            return readTestFile("representation.xml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        fail("Can't read representation.xml file");
-        return null;
-    }
+	public Representation createNewRepresentation(InputStream inputStream) {
+		return this.emptyRepresentation.createNewRepresentation(inputStream);
+	}
 
-    public  Representation createNewRepresentation(Object o){
-        return this.emptyRepresentation.createNewRepresentation(o);
-    }
-
-    public  Representation createNewRepresentation(String s){
-        return this.emptyRepresentation.createNewRepresentation(s);
-    }
-
-    public  Representation createNewRepresentation(InputStream inputStream){
-        return this.emptyRepresentation.createNewRepresentation(inputStream);
-    }
-
-    public  Representation createNewRepresentation(){
-        return this.emptyRepresentation.createNewRepresentation();
-    }
+	public Representation createNewRepresentation() {
+		return this.emptyRepresentation.createNewRepresentation();
+	}
 }

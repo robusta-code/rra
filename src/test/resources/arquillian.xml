@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<arquillian>
+	<container qualifier="tomee" default="true">
+		<configuration>
+			<!-- choose a random port to avoid port conflicts -->
+			<property name="httpPort">-1</property>
+			<property name="stopPort">-1</property>
+			<property name="ajpPort">-1</property>
+		</configuration>
+	</container>
+</arquillian>
