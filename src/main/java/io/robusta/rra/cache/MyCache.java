@@ -104,7 +104,7 @@ public class MyCache {
     public synchronized Representation<?> get( String key ) {
         Representation<?> representation = mapCache.get( key );
         if ( representation != null ) {
-            System.out.println( key + ": get from cache" );
+            // System.out.println( key + ": get from cache" );
             return representation;
         }
         return null;
