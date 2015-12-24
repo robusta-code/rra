@@ -116,9 +116,9 @@ public class MyCache {
      * cache, it is replaced by the new entry. If the cache is full, the LRU
      * (least recently used) entry is removed from the cache.
      * 
-     * @param key
+     * @param representationKey
      *            the key with which the specified value is to be associated.
-     * @param value
+     * @param representation
      *            a value to be associated with the specified key.
      */
     public synchronized void put( String representationKey, Representation representation, Resource<?> resource ) {
@@ -133,12 +133,9 @@ public class MyCache {
      * used) entry. If an entry with the specified key already exists in the
      * cache, it is replaced by the new entry. If the cache is full, the LRU
      * (least recently used) entry is removed from the cache.
-     * 
-     * @param key
-     *            the key with which the specified value is to be associated.
+     *
      * @param representationKey
      * @param representation
-     * @param resource
      */
 
     public synchronized void put( String representationKey, Representation representation,
@@ -229,9 +226,7 @@ public class MyCache {
 
     /**
      * Retrieve All Fields (inherited) from a Class
-     * 
-     * @param fields
-     * @param type
+     *
      * @return
      */
     private void mapCacheDependenciesAddEntry( String representationKey, String resourceKey ) {
