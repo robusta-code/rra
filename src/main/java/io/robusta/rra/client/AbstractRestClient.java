@@ -46,50 +46,51 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     /**
      * can be easily configured outside
      */
-    protected static String       applicationUri;
-    protected static String       defaultContentType = RestClient.xmlContentType;
+    protected static String applicationUri;
+    protected static String defaultContentType = RestClient.xmlContentType;
     /**
      *
      */
-    protected static String       authorizationValue = "";
-    protected Map<String, String> responseHeaders    = new HashMap<String, String>();
+    protected static String authorizationValue = "";
+    protected Map<String, String> responseHeaders = new HashMap<String, String>();
     /**
      *
      */
-    protected String              entity             = "";
+    protected String entity = "";
     /**
      *
      */
-    protected String              credentials        = "";
+    protected String credentials = "";
     /**
      *
      */
-    protected int                 httpCode;
+    protected int httpCode;
     /**
      *
      */
-    protected String              response;
+    protected String response;
     /**
      *
      */
-    protected String              contentType        = RestClient.jsonContentType;
+    protected String contentType = RestClient.jsonContentType;
 
     /**
      * set the default content type of the request
+     *
      * @param contentType
      */
-    public static void setDefaultContentType( String contentType ) {
+    public static void setDefaultContentType(String contentType) {
         defaultContentType = contentType;
-        if ( contentType.equals( "xml" ) ) {
+        if (contentType.equals("xml")) {
             defaultContentType = RestClient.xmlContentType;
         }
-        if ( contentType.equals( "html" ) ) {
+        if (contentType.equals("html")) {
             defaultContentType = RestClient.htmlContentType;
         }
-        if ( contentType.equals( "form" ) ) {
+        if (contentType.equals("form")) {
             defaultContentType = RestClient.formContentType;
         }
-        if ( contentType.equals( "json" ) ) {
+        if (contentType.equals("json")) {
             defaultContentType = RestClient.jsonContentType;
         }
     }
@@ -98,12 +99,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * For non-gwt application, it will check that uri starts with http or https
      *
      * @param applicationUri
-     * @throws IllegalArgumentException
-     *             if uri does not start with http:// or https://
+     * @throws IllegalArgumentException if uri does not start with http:// or https://
      */
-    protected void checkConstructorUri( String applicationUri ) throws IllegalArgumentException {
-        if ( !applicationUri.startsWith( "http://" ) && !applicationUri.startsWith( "https://" ) ) {
-            throw new IllegalArgumentException( "applicationUri must start with http:// or https://" );
+    protected void checkConstructorUri(String applicationUri) throws IllegalArgumentException {
+        if (!applicationUri.startsWith("http://") && !applicationUri.startsWith("https://")) {
+            throw new IllegalArgumentException("applicationUri must start with http:// or https://");
         }
     }
 
@@ -118,45 +118,47 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * @param representation
      * @return result[0] is the full URI, result[1] is the entity
      * @throws io.robusta.rra.exception.HttpException
+     *
      */
-    public String[] prepareMethod( HttpMethod method, String relativePath, CoupleList<String, Object> parameters,
-            Representation representation ) throws HttpException {
+    public String[] prepareMethod(HttpMethod method, String relativePath, CoupleList<String, Object> parameters,
+                                  Representation representation) throws HttpException {
 
         this.responseHeaders = new HashMap<String, String>();
         String body = entity;
         // Making a clear uri
-        String url = StringUtils.addPath( applicationUri, relativePath );
+        String url = StringUtils.addPath(applicationUri, relativePath);
 
         // Dealing with parameters
         // Special case of forms && POST/PUT methods
-        if ( representation != null ) {
+        if (representation != null) {
             // params will go in the entity
             // adding parameters to the entity
             assert entity == null || entity.length() == 0;
             // body = encodeFormEntity(parameters);
             body = representation.toString();
-        } else if ( ( parameters != null && parameters.size() > 0 ) ) {
-            url = encodeUrl( applicationUri, relativePath, parameters );
+        } else if ((parameters != null && parameters.size() > 0)) {
+            url = encodeUrl(applicationUri, relativePath, parameters);
         }
 
-        return new String[] { url, body };
+        return new String[]{url, body};
     }
 
     /**
-     * Set autorizationValue as a static method
+     * Set authorizationValue as a static method
      *
      * @param authorizationValue
      */
-    public void setAuthorizationValue( String authorizationValue ) {
+    public void setAuthorizationValue(String authorizationValue) {
         AbstractRestClient.authorizationValue = authorizationValue;
     }
 
     /**
-     * check if the content type is a form 
+     * check if the content type is a form
+     *
      * @return
      */
     protected boolean contentTypeIsForm() {
-        return this.contentType.contains( "x-www-form-urlencoded" );
+        return this.contentType.contains("x-www-form-urlencoded");
     }
 
     /**
@@ -167,18 +169,18 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      *
      * @param contentType
      */
-    public void setContentType( String contentType ) {
+    public void setContentType(String contentType) {
         this.contentType = contentType;
-        if ( contentType.equals( "xml" ) ) {
+        if (contentType.equals("xml")) {
             this.contentType = RestClient.xmlContentType;
         }
-        if ( contentType.equals( "html" ) ) {
+        if (contentType.equals("html")) {
             this.contentType = RestClient.htmlContentType;
         }
-        if ( contentType.equals( "form" ) ) {
+        if (contentType.equals("form")) {
             this.contentType = RestClient.formContentType;
         }
-        if ( contentType.equals( "json" ) ) {
+        if (contentType.equals("json")) {
             this.contentType = RestClient.jsonContentType;
         }
     }
@@ -188,7 +190,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      *
      * @param applicationUri
      */
-    public void setApplicationUri( String applicationUri ) {
+    public void setApplicationUri(String applicationUri) {
         AbstractRestClient.applicationUri = applicationUri;
     }
 
@@ -197,7 +199,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * 
      * @see io.robusta.rra.client.RestClient#setNextEntity(java.lang.String)
      */
-    public void setNextEntity( String postBody ) {
+    public void setNextEntity(String postBody) {
         this.entity = postBody;
     }
 
@@ -221,10 +223,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     }
 
     /**
-     * reset the request 
+     * reset the request
      */
     public void clean() {
-        setNextEntity( "" );
+        setNextEntity("");
         this.contentType = defaultContentType;
     }
 
@@ -235,63 +237,65 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * @param nameOrValue
      * @return
      */
-    public abstract String encodeParameter( String nameOrValue );
+    public abstract String encodeParameter(String nameOrValue);
 
     /**
      * build url http compliant
+     *
      * @param applicationUri is the base Uri of the application
-     * @param relativePath is the relative path of the request
-     * @param parameters are the parameters of the request
+     * @param relativePath   is the relative path of the request
+     * @param parameters     are the parameters of the request
      * @return the encode url
      */
-    protected String encodeUrl( String applicationUri, String relativePath, CoupleList<String, Object> parameters ) {
-        String url = StringUtils.addPath( applicationUri, relativePath );
-        StringBuilder result = new StringBuilder( url );
+    protected String encodeUrl(String applicationUri, String relativePath, CoupleList<String, Object> parameters) {
+        String url = StringUtils.addPath(applicationUri, relativePath);
+        StringBuilder result = new StringBuilder(url);
         // throw new
         // HttpException("Can't do a POST method with both parameters and postbody");
-        if ( !parameters.isEmpty() ) {
-            result.append( "?" );
+        if (!parameters.isEmpty()) {
+            result.append("?");
         }
-        for ( int i = 0; i < parameters.size(); i++ ) {
+        for (int i = 0; i < parameters.size(); i++) {
 
-            Couple<String, Object> c = parameters.get( i );
-            String paramName = encodeParameter( c.getLeft() );
-            String paramValue = encodeParameter( c.getRight().toString() );
+            Couple<String, Object> c = parameters.get(i);
+            String paramName = encodeParameter(c.getLeft());
+            String paramValue = encodeParameter(c.getRight().toString());
 
-            result.append( paramName );
-            result.append( "=" );
-            result.append( paramValue );
+            result.append(paramName);
+            result.append("=");
+            result.append(paramValue);
             // StringUtilities.replaceAll(value, "+","%20");
-            if ( i != parameters.size() - 1 ) {
-                result.append( "&" );
+            if (i != parameters.size() - 1) {
+                result.append("&");
             }
         }
         return result.toString();
     }
 
     /**
-     * build the form entity 
+     * build the form entity
+     *
      * @param parameters
      * @return the encoded form entity
      */
-    protected String encodeFormEntity( CoupleList<String, Object> parameters ) {
+    protected String encodeFormEntity(CoupleList<String, Object> parameters) {
         StringBuilder result = new StringBuilder();
 
         boolean firstLine = true;
-        for ( int i = 0; i < parameters.size(); i++ ) {
+        for (int i = 0; i < parameters.size(); i++) {
 
-            if ( firstLine ) {
+            if (firstLine) {
                 firstLine = false;
             } else {
-                result.append( "\n" );
+                result.append("\n");
             }
-            Couple<String, Object> c = parameters.get( i );
-            String paramName = encodeParameter( c.getLeft() );
-            String paramValue = encodeParameter( c.getRight().toString() );
+            Couple<String, Object> c = parameters.get(i);
+            String paramName = encodeParameter(c.getLeft());
+            String paramValue = encodeParameter(c.getRight().toString());
 
-            result.append( paramName );
-            result.append( "=" );
-            result.append( paramValue );
+            result.append(paramName);
+            result.append("=");
+            result.append(paramValue);
         }
         return result.toString();
     }
@@ -313,10 +317,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.representation.Representation)
      */
     @Override
-    public String POST( String relativeFileWithNoParam, Representation representation ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.POST, relativeFileWithNoParam, null, representation );
+    public String POST(String relativeFileWithNoParam, Representation representation) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.POST, relativeFileWithNoParam, null, representation);
         assert obj.length == 2;
-        return executeMethod( HttpMethod.POST, obj[0], obj[1] );
+        return executeMethod(HttpMethod.POST, obj[0], obj[1]);
     }
 
     /*
@@ -326,10 +330,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.utils.CoupleList)
      */
     @Override
-    public String GET( String relativeFileWithNoParam, CoupleList<String, Object> parameters ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.GET, relativeFileWithNoParam, parameters, null );
+    public String GET(String relativeFileWithNoParam, CoupleList<String, Object> parameters) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.GET, relativeFileWithNoParam, parameters, null);
         assert obj.length == 2;
-        return executeMethod( HttpMethod.GET, obj[0], obj[1] );
+        return executeMethod(HttpMethod.GET, obj[0], obj[1]);
     }
 
     /*
@@ -339,10 +343,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.representation.Representation)
      */
     @Override
-    public String PUT( String relativeFileWithNoParam, Representation representation ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.PUT, relativeFileWithNoParam, null, representation );
+    public String PUT(String relativeFileWithNoParam, Representation representation) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.PUT, relativeFileWithNoParam, null, representation);
         assert obj.length == 2;
-        return executeMethod( HttpMethod.PUT, obj[0], obj[1] );
+        return executeMethod(HttpMethod.PUT, obj[0], obj[1]);
     }
 
     /*
@@ -352,10 +356,10 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.utils.CoupleList)
      */
     @Override
-    public String DELETE( String relativeFileWithNoParam, CoupleList<String, Object> parameters ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.DELETE, relativeFileWithNoParam, parameters, null );
+    public String DELETE(String relativeFileWithNoParam, CoupleList<String, Object> parameters) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.DELETE, relativeFileWithNoParam, parameters, null);
         assert obj.length == 2;
-        return executeMethod( HttpMethod.DELETE, obj[0], obj[1] );
+        return executeMethod(HttpMethod.DELETE, obj[0], obj[1]);
     }
 
     /*
@@ -365,11 +369,11 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * java.lang.String, io.robusta.rra.utils.CoupleList)
      */
     @Override
-    public String OTHER( String method, String relativeFileWithNoParam, CoupleList<String, Object> parameters )
+    public String OTHER(String method, String relativeFileWithNoParam, CoupleList<String, Object> parameters)
             throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.OTHER.setMethod( method ), relativeFileWithNoParam, parameters, null );
+        String[] obj = prepareMethod(HttpMethod.OTHER.setMethod(method), relativeFileWithNoParam, parameters, null);
         assert obj.length == 2;
-        return executeMethod( HttpMethod.OTHER.setMethod( method ), obj[0], obj[1] );
+        return executeMethod(HttpMethod.OTHER.setMethod(method), obj[0], obj[1]);
     }
 
     /**
@@ -382,7 +386,7 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * @return
      * @throws HttpException
      */
-    protected abstract String executeMethod( final HttpMethod method, final String url, final String entity )
+    protected abstract String executeMethod(final HttpMethod method, final String url, final String entity)
             throws HttpException;
 
     /*
@@ -392,12 +396,12 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.utils.CoupleList, io.robusta.rra.client.Callback)
      */
     @Override
-    public void get( String relativePath, CoupleList<String, Object> parameters, Callback callback )
+    public void get(String relativePath, CoupleList<String, Object> parameters, Callback callback)
             throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.GET, relativePath, parameters, null );
+        String[] obj = prepareMethod(HttpMethod.GET, relativePath, parameters, null);
         assert obj.length == 2;
         String url = obj[0], body = obj[1];
-        executeMethod( HttpMethod.GET, url, body, callback );
+        executeMethod(HttpMethod.GET, url, body, callback);
     }
 
     /*
@@ -408,13 +412,13 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.client.Callback)
      */
     @Override
-    public void post( String relativePath, Representation representation, Callback callback ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.POST, relativePath, null, representation );
+    public void post(String relativePath, Representation representation, Callback callback) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.POST, relativePath, null, representation);
         assert obj.length == 2;
         String url = obj[0], body = obj[1];
 
-        setNextEntity( body );
-        executeMethod( HttpMethod.POST, url, body, callback );
+        setNextEntity(body);
+        executeMethod(HttpMethod.POST, url, body, callback);
     }
 
     /*
@@ -425,13 +429,13 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.client.Callback)
      */
     @Override
-    public void put( String relativePath, Representation representation, Callback callback ) throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.PUT, relativePath, null, representation );
+    public void put(String relativePath, Representation representation, Callback callback) throws HttpException {
+        String[] obj = prepareMethod(HttpMethod.PUT, relativePath, null, representation);
         assert obj.length == 2;
         String url = obj[0], body = obj[1];
 
-        setNextEntity( body );
-        executeMethod( HttpMethod.PUT, url, body, callback );
+        setNextEntity(body);
+        executeMethod(HttpMethod.PUT, url, body, callback);
     }
 
     /*
@@ -441,14 +445,14 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.utils.CoupleList, io.robusta.rra.client.Callback)
      */
     @Override
-    public void delete( String relativePath, CoupleList<String, Object> parameters, Callback callback )
+    public void delete(String relativePath, CoupleList<String, Object> parameters, Callback callback)
             throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.DELETE, relativePath, parameters, null );
+        String[] obj = prepareMethod(HttpMethod.DELETE, relativePath, parameters, null);
         assert obj.length == 2;
         String url = obj[0], body = obj[1];
 
-        setNextEntity( body );
-        executeMethod( HttpMethod.DELETE, url, body, callback );
+        setNextEntity(body);
+        executeMethod(HttpMethod.DELETE, url, body, callback);
     }
 
     /*
@@ -459,15 +463,15 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
      * io.robusta.rra.client.Callback)
      */
     @Override
-    public void other( String method, String relativePath,
-            CoupleList<String, Object> parameters, Callback callback )
+    public void other(String method, String relativePath,
+                      CoupleList<String, Object> parameters, Callback callback)
             throws HttpException {
-        String[] obj = prepareMethod( HttpMethod.OTHER.setMethod( method ), relativePath, parameters, null );
+        String[] obj = prepareMethod(HttpMethod.OTHER.setMethod(method), relativePath, parameters, null);
         assert obj.length == 2;
         String url = obj[0], body = obj[1];
 
-        setNextEntity( body );
-        executeMethod( HttpMethod.OTHER.setMethod( method ), url, body, callback );
+        setNextEntity(body);
+        executeMethod(HttpMethod.OTHER.setMethod(method), url, body, callback);
 
     }
 
@@ -481,35 +485,36 @@ public abstract class AbstractRestClient<Client> implements RestClient<Client> {
     public abstract void join();
 
     /**
-     *  This method has the responsability do make the correct call with a
+     * This method has the responsibility do make the correct call with a
      * specific implementation for an asynchronous call
+     *
      * @param method
      * @param url
      * @param entity
      * @param callback for an asynchronous call
      * @throws HttpException
      */
-    protected abstract void executeMethod( final HttpMethod method, final String url, final String entity,
-            final Callback callback ) throws HttpException;
+    protected abstract void executeMethod(final HttpMethod method, final String url, final String entity,
+                                          final Callback callback) throws HttpException;
 
     /**
-     * calls the callback succes or failure, using the httpcode
+     * calls the callback success or failure, using the httpcode
      *
      * @param httpCode
      * @param inputStream
      * @param callback
      */
-    protected void callCallback( Callback callback, int httpCode, InputStream inputStream ) {
+    protected void callCallback(Callback callback, int httpCode, InputStream inputStream) {
 
-        if ( httpCode >= 200 && httpCode < 300 ) {
-            callback.onSuccess( inputStream );
+        if (httpCode >= 200 && httpCode < 300) {
+            callback.onSuccess(inputStream);
             callback.onComplete();
-            
-        } else if ( httpCode >= 300 && httpCode < 400 ) {
+
+        } else if (httpCode >= 300 && httpCode < 400) {
             // no success
-        } else if ( httpCode >= 400 && httpCode < 600 ) {
-        } else if ( httpCode < 600 ) {
-            callback.onFailure( new RestException( httpCode, inputStream ) );
+        } else if (httpCode >= 400 && httpCode < 600) {
+        } else if (httpCode < 600) {
+            callback.onFailure(new RestException(httpCode, inputStream));
         }
     }
 }
