@@ -49,7 +49,7 @@ public class ResourceSerializer {
             try {
                 map.putAll(getClassItems(current, object));
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("Illegal Access to object fileds using Java Reflection.");
+                throw new RuntimeException("Illegal Access to object fields using Java Reflection.");
             }
             current = current.getSuperclass();
         }

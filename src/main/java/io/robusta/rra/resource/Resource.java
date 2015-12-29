@@ -55,7 +55,9 @@ public interface Resource<IdType> {
      * 
      * @return resource prefix
      */
-    public String getPrefix();
+    default String getPrefix(){
+        return this.getClass().getSimpleName();
+    };
 
     /**
      * Name of the prefix used to represent a list of this resource. For
@@ -69,13 +71,17 @@ public interface Resource<IdType> {
      * 
      * @return resource list prefix
      */
-    public String getCollectionPrefix();
+    default String getCollectionPrefix(){
+        return this.getPrefix()+"s";
+    };
 
     /**
      * Serialize this Resource. You can do it manually or use a Mapper
      * 
      * @return all name/values of this object
      */
-    public Map<String, Object> serialize();
+    default Map<String, Object> serialize(){
+        return ResourceSerializer.serialize(this);
+    };
 
 }
