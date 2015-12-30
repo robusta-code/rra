@@ -34,6 +34,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * FileUtilities brings frequently used funcions, to be used in a standard
@@ -49,6 +51,21 @@ import java.io.InputStreamReader;
 public class FileUtils {
 
     static boolean inClouds = false;
+
+    public static void initFile(Path path) throws IOException {
+        if (Files.exists(path)){
+            if (Files.isDirectory(path)){
+                throw new IOException("Path '"+path+"' is a directory");
+            }
+            if (!Files.isWritable(path)){
+                throw new IOException("Path '"+path+"' is not writable");
+            }
+        }else{
+            Files.createFile(path);
+        }
+    }
+
+
 
     /**
      * Reads a file line after line.
