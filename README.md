@@ -1,3 +1,8 @@
+Deprecated
+=====
+
+**Don't use it** ! Just here for the record, it's my first serious open source project :D 
+
 What is it ?
 ===
 
